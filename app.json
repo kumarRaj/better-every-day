@@ -14,7 +14,31 @@
     "web": {
       "bundler": "metro",
       "output": "single",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "shortName": "Better Everyday",
+      "description": "A modern self improvement app",
+      "themeColor": "#ffffff",
+      "backgroundColor": "#ffffff",
+      "manifest": {
+        "name": "Better Everyday",
+        "short_name": "Better Everyday",
+        "start_url": "/",
+        "display": "standalone",
+        "background_color": "#ffffff",
+        "theme_color": "#ffffff",
+        "icons": [
+          {
+            "src": "./assets/images/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+          },
+          {
+            "src": "./assets/images/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+          }
+        ]
+      }
     },
     "plugins": ["expo-router", "expo-font", "expo-web-browser"],
     "experiments": {
