@@ -1,0 +1,100 @@
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Habit } from '@/types/habits';
+import Colors from '@/constants/Colors';
+import CategoryBadge from '@/components/CategoryBadge';
+import { Heart, ChevronRight } from 'lucide-react-native';
+import { useHabits } from '@/contexts/HabitContext';
+import { useHapticFeedback } from '@/hooks/useHapticFeedback';
+
+type HabitListItemProps = {
+  habit: Habit;
+};
+
+export default function HabitListItem({ habit }: HabitListItemProps) {
+  const { toggleFavorite } = useHabits();
+  const { triggerFeedback } = useHapticFeedback();
+  
+  const handleFavoritePress = () => {
+    toggleFavorite(habit.id);
+    triggerFeedback('light');
+  };
+  
+  return (
+    <View style={styles.container}>
+      <View style={styles.mainContent}>
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>{habit.title}</Text>
+          <Text 
+            numberOfLines={2}
+            ellipsizeMode="tail"
+            style={styles.description}
+          >
+            {habit.description}
+          </Text>
+          <CategoryBadge category={habit.category} small />
+        </View>
+        
+        <View style={styles.actionsContainer}>
+          <TouchableOpacity
+            style={styles.favoriteButton}
+            onPress={handleFavoritePress}
+          >
+            <Heart 
+              size={20} 
+              color={habit.isFavorite ? Colors.accent : Colors.textSecondary}
+              fill={habit.isFavorite ? Colors.accent : 'transparent'}
+            />
+          </TouchableOpacity>
+          
+          <ChevronRight size={20} color={Colors.textSecondary} />
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: Colors.cardBackground,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginVertical: 6,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  mainContent: {
+    flexDirection: 'row',
+    padding: 16,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.text,
+    marginBottom: 4,
+  },
+  description: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+    marginBottom: 8,
+  },
+  actionsContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: 16,
+    flexDirection: 'row',
+  },
+  favoriteButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Colors.cardBackground,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+});
