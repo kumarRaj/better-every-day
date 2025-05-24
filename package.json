@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "EXPO_NO_TELEMETRY=1 expo start",
-    "build:web": "expo export --platform web",
+    "build:web": "expo export --platform web && cp -r assets/images dist/assets/images && cp service-worker.js dist/ && cp manifest.json dist/",
     "lint": "expo lint"
   },
   "dependencies": {
@@ -44,6 +44,9 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.10",
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^13.0.0",
+    "html-webpack-plugin": "^5.6.3",
     "typescript": "~5.8.3"
   }
 }

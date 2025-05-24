@@ -7,38 +7,30 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true
-    },
     "web": {
       "bundler": "metro",
-      "output": "single",
       "favicon": "./assets/images/favicon.png",
+      "name": "Better Everyday",
       "shortName": "Better Everyday",
-      "description": "A modern self improvement app",
+      "lang": "en",
+      "scope": "/",
       "themeColor": "#ffffff",
       "backgroundColor": "#ffffff",
-      "manifest": {
-        "name": "Better Everyday",
-        "short_name": "Better Everyday",
-        "start_url": "/",
-        "display": "standalone",
-        "background_color": "#ffffff",
-        "theme_color": "#ffffff",
-        "icons": [
-          {
-            "src": "./assets/images/icon-192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-          },
-          {
-            "src": "./assets/images/icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-          }
-        ]
-      }
+      "startUrl": "/?source=pwa",
+      "display": "standalone",
+      "orientation": "portrait",
+      "icons": [
+        {
+          "src": "./assets/images/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        },
+        {
+          "src": "./assets/images/icon-512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ]
     },
     "plugins": ["expo-router", "expo-font", "expo-web-browser"],
     "experiments": {
