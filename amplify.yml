@@ -6,7 +6,7 @@ frontend:
         - npm ci
     build:
       commands:
-        - npm build:web
+        - npm run build:web
   artifacts:
     baseDirectory: dist  # or web-build, depending on your Expo version
     files:
