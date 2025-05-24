@@ -55,7 +55,7 @@ export default function TodayScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Header title="Daily Habits" />
+      <Header title="Better everyday" />
       
       <View style={styles.contentContainer}>
         {currentHabit ? (
