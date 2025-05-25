@@ -10,6 +10,7 @@
     "web": {
       "bundler": "metro",
       "favicon": "./assets/images/favicon.png",
+      "templatePath": "./web/index.html",
       "name": "Better Everyday",
       "shortName": "Better Everyday",
       "lang": "en",
