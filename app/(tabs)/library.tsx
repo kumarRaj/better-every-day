@@ -6,18 +6,24 @@ import { useHabits } from '@/contexts/HabitContext';
 import Header from '@/components/Header';
 import Colors from '@/constants/Colors';
 import HabitListItem from '@/components/HabitListItem';
-import { Search, Plus, BookOpen, Filter } from 'lucide-react-native';
+import { Search, Plus, BookOpen, Filter, Archive, Edit2 } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+
+type Section = 'active' | 'archived';
 
 export default function LibraryScreen() {
   const { habits, categories } = useHabits();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<Section>('active');
+  const router = useRouter();
 
   const filteredHabits = habits.filter(habit => {
     const matchesSearch = habit.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          habit.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory ? habit.category === selectedCategory : true;
-    return matchesSearch && matchesCategory;
+    const matchesSection = activeSection === 'active' ? !habit.isArchived : habit.isArchived;
+    return matchesSearch && matchesCategory && matchesSection;
   });
 
   const renderCategoryPill = ({ item }: { item: string }) => {
@@ -41,6 +47,39 @@ export default function LibraryScreen() {
       </TouchableOpacity>
     );
   };
+
+  const renderSectionHeader = () => (
+    <View style={styles.sectionHeader}>
+      <TouchableOpacity
+        style={[
+          styles.sectionButton,
+          activeSection === 'active' && styles.activeSectionButton
+        ]}
+        onPress={() => setActiveSection('active')}
+      >
+        <Text style={[
+          styles.sectionButtonText,
+          activeSection === 'active' && styles.activeSectionButtonText
+        ]}>
+          Active Habits
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[
+          styles.sectionButton,
+          activeSection === 'archived' && styles.activeSectionButton
+        ]}
+        onPress={() => setActiveSection('archived')}
+      >
+        <Text style={[
+          styles.sectionButtonText,
+          activeSection === 'archived' && styles.activeSectionButtonText
+        ]}>
+          Archived
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -74,6 +113,8 @@ export default function LibraryScreen() {
           />
         </View>
       </Animated.View>
+
+      {renderSectionHeader()}
       
       <Animated.FlatList
         data={filteredHabits}
@@ -84,7 +125,11 @@ export default function LibraryScreen() {
             exiting={FadeOut.duration(200)}
             layout={Layout}
           >
-            <HabitListItem habit={item} />
+            <HabitListItem 
+              habit={item} 
+              showArchiveButton={activeSection === 'active'}
+              showUnarchiveButton={activeSection === 'archived'}
+            />
           </Animated.View>
         )}
         contentContainerStyle={styles.habitsList}
@@ -96,15 +141,22 @@ export default function LibraryScreen() {
             <Text style={styles.emptySubtext}>
               {searchQuery || selectedCategory
                 ? "Try adjusting your search or filter"
-                : "Add your first habit to get started"}
+                : activeSection === 'active'
+                  ? "Add your first habit to get started"
+                  : "No archived habits yet"}
             </Text>
           </View>
         )}
       />
       
-      <TouchableOpacity style={styles.addButton}>
-        <Plus size={24} color={Colors.white} />
-      </TouchableOpacity>
+      {activeSection === 'active' && (
+        <TouchableOpacity 
+          style={styles.addButton}
+          onPress={() => router.push('/(tabs)/add')}
+        >
+          <Plus size={24} color={Colors.white} />
+        </TouchableOpacity>
+      )}
     </SafeAreaView>
   );
 }
@@ -162,6 +214,30 @@ const styles = StyleSheet.create({
   categoryPillText: {
     fontSize: 14,
     color: Colors.text,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  sectionButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    marginRight: 8,
+    borderRadius: 20,
+  },
+  activeSectionButton: {
+    backgroundColor: Colors.primaryLight,
+  },
+  sectionButtonText: {
+    fontSize: 14,
+    color: Colors.textSecondary,
+  },
+  activeSectionButtonText: {
+    color: Colors.primary,
+    fontWeight: '600',
   },
   habitsList: {
     paddingHorizontal: 16,

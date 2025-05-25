@@ -10,6 +10,7 @@ const HabitsContext = createContext<HabitsContextType>({
   updateHabit: () => {},
   deleteHabit: () => {},
   toggleFavorite: () => {},
+  toggleArchive: () => {},
   resetToDefaults: () => {},
 });
 
@@ -28,7 +29,13 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
         const storedHabits = await AsyncStorage.getItem(STORAGE_KEY);
         
         if (storedHabits) {
-          setHabits(JSON.parse(storedHabits));
+          const parsedHabits = JSON.parse(storedHabits);
+          // Ensure all habits have isArchived property
+          const habitsWithArchive = parsedHabits.map((habit: Habit) => ({
+            ...habit,
+            isArchived: habit.isArchived || false
+          }));
+          setHabits(habitsWithArchive);
         } else {
           // If no stored habits, use defaults
           setHabits(DefaultHabits);
@@ -60,7 +67,7 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
   }, [habits]);
   
   const addHabit = (habit: Habit) => {
-    setHabits(prevHabits => [...prevHabits, habit]);
+    setHabits(prevHabits => [...prevHabits, { ...habit, isArchived: false }]);
     
     // Add new category if it doesn't exist
     if (!categories.includes(habit.category)) {
@@ -89,6 +96,16 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
       )
     );
   };
+
+  const toggleArchive = (id: string) => {
+    setHabits(prevHabits => 
+      prevHabits.map(habit => 
+        habit.id === id
+          ? { ...habit, isArchived: !habit.isArchived }
+          : habit
+      )
+    );
+  };
   
   const resetToDefaults = () => {
     setHabits(DefaultHabits);
@@ -102,6 +119,7 @@ export const HabitProvider = ({ children }: { children: React.ReactNode }) => {
     updateHabit,
     deleteHabit,
     toggleFavorite,
+    toggleArchive,
     resetToDefaults,
   };
   

@@ -7,6 +7,7 @@ const DefaultHabits: Habit[] = [
     description: 'Take time to clear your mind and focus on your breath. Just 10 minutes of mindfulness can reduce stress and improve focus.',
     category: 'Mindfulness',
     isFavorite: false,
+    isArchived: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -15,6 +16,7 @@ const DefaultHabits: Habit[] = [
     description: 'Stay hydrated throughout the day. Proper hydration improves cognitive function, energy levels, and overall well-being.',
     category: 'Health',
     isFavorite: false,
+    isArchived: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -23,6 +25,7 @@ const DefaultHabits: Habit[] = [
     description: 'Reading regularly expands your knowledge, reduces stress, and improves focus and concentration.',
     category: 'Learning',
     isFavorite: false,
+    isArchived: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -31,6 +34,7 @@ const DefaultHabits: Habit[] = [
     description: 'Write down three things you\'re grateful for today. Gratitude practice increases happiness and reduces negative emotions.',
     category: 'Mindfulness',
     isFavorite: false,
+    isArchived: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -39,6 +43,7 @@ const DefaultHabits: Habit[] = [
     description: 'Walking improves cardiovascular health, boosts creativity, and helps clear your mind.',
     category: 'Fitness',
     isFavorite: false,
+    isArchived: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -47,6 +52,7 @@ const DefaultHabits: Habit[] = [
     description: 'Expanding your vocabulary improves communication skills and cognitive function over time.',
     category: 'Learning',
     isFavorite: false,
+    isArchived: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -55,6 +61,7 @@ const DefaultHabits: Habit[] = [
     description: 'Regular stretching increases flexibility, improves posture, and helps prevent injuries.',
     category: 'Fitness',
     isFavorite: false,
+    isArchived: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -63,6 +70,7 @@ const DefaultHabits: Habit[] = [
     description: 'Journaling helps process emotions, gain clarity, and track personal growth over time.',
     category: 'Mindfulness',
     isFavorite: false,
+    isArchived: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -71,6 +79,7 @@ const DefaultHabits: Habit[] = [
     description: 'Take 5 minutes to plan your priorities. This simple habit increases productivity and reduces stress.',
     category: 'Productivity',
     isFavorite: false,
+    isArchived: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -79,6 +88,7 @@ const DefaultHabits: Habit[] = [
     description: 'Fruits provide essential vitamins, minerals, and fiber that support overall health.',
     category: 'Health',
     isFavorite: false,
+    isArchived: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -87,6 +97,7 @@ const DefaultHabits: Habit[] = [
     description: 'Deep, intentional breathing reduces stress, lowers blood pressure, and improves mental clarity.',
     category: 'Mindfulness',
     isFavorite: false,
+    isArchived: false,
     createdAt: new Date().toISOString(),
   },
   {
@@ -95,6 +106,7 @@ const DefaultHabits: Habit[] = [
     description: 'Consistent learning keeps your mind sharp and expands your knowledge base over time.',
     category: 'Learning',
     isFavorite: false,
+    isArchived: false,
     createdAt: new Date().toISOString(),
   }
 ];

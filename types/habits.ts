@@ -4,6 +4,7 @@ export type Habit = {
   description: string;
   category: string;
   isFavorite: boolean;
+  isArchived: boolean;
   createdAt: string;
 };
 
@@ -14,5 +15,6 @@ export type HabitsContextType = {
   updateHabit: (habit: Habit) => void;
   deleteHabit: (id: string) => void;
   toggleFavorite: (id: string) => void;
+  toggleArchive: (id: string) => void;
   resetToDefaults: () => void;
 };

@@ -2,21 +2,41 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Habit } from '@/types/habits';
 import Colors from '@/constants/Colors';
 import CategoryBadge from '@/components/CategoryBadge';
-import { Heart, ChevronRight } from 'lucide-react-native';
+import { Heart, ChevronRight, Archive, Edit2 } from 'lucide-react-native';
 import { useHabits } from '@/contexts/HabitContext';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
+import { useRouter } from 'expo-router';
 
 type HabitListItemProps = {
   habit: Habit;
+  showArchiveButton?: boolean;
+  showUnarchiveButton?: boolean;
 };
 
-export default function HabitListItem({ habit }: HabitListItemProps) {
-  const { toggleFavorite } = useHabits();
+export default function HabitListItem({ 
+  habit, 
+  showArchiveButton = false,
+  showUnarchiveButton = false 
+}: HabitListItemProps) {
+  const { toggleFavorite, toggleArchive } = useHabits();
   const { triggerFeedback } = useHapticFeedback();
+  const router = useRouter();
   
   const handleFavoritePress = () => {
     toggleFavorite(habit.id);
     triggerFeedback('light');
+  };
+
+  const handleArchivePress = () => {
+    toggleArchive(habit.id);
+    triggerFeedback('light');
+  };
+
+  const handleEditPress = () => {
+    router.push({
+      pathname: '/(tabs)/edit',
+      params: { id: habit.id }
+    });
   };
   
   return (
@@ -35,8 +55,33 @@ export default function HabitListItem({ habit }: HabitListItemProps) {
         </View>
         
         <View style={styles.actionsContainer}>
+          {showArchiveButton && (
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={handleArchivePress}
+            >
+              <Archive size={20} color={Colors.textSecondary} />
+            </TouchableOpacity>
+          )}
+          
+          {showUnarchiveButton && (
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={handleArchivePress}
+            >
+              <Archive size={20} color={Colors.primary} />
+            </TouchableOpacity>
+          )}
+
           <TouchableOpacity
-            style={styles.favoriteButton}
+            style={styles.actionButton}
+            onPress={handleEditPress}
+          >
+            <Edit2 size={20} color={Colors.textSecondary} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={styles.actionButton}
             onPress={handleFavoritePress}
           >
             <Heart 
@@ -86,7 +131,7 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     flexDirection: 'row',
   },
-  favoriteButton: {
+  actionButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
