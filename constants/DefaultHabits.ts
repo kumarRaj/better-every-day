@@ -108,6 +108,15 @@ const DefaultHabits: Habit[] = [
     isFavorite: false,
     isArchived: false,
     createdAt: new Date().toISOString(),
+  },
+  {
+    id: 13,
+    title: 'We are all trying our best',
+    description: 'A reminder that everyone is doing their best, even when things get tough including you',
+    category: 'Mindfulness',
+    isFavorite: false,
+    isArchived: false,
+    createdAt: new Date().toISOString(),
   }
 ];
 
