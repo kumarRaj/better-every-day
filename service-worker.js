@@ -3,7 +3,6 @@ const CACHE_NAME = 'better-everyday-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/static/js/main.bundle.js'
 ];
 
 self.addEventListener('install', event => {
