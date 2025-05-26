@@ -26,19 +26,21 @@ export default function TodayScreen() {
   }, [habits]);
 
   const showRandomHabit = () => {
-    if (habits.length === 0) {
+    const activeHabits = habits.filter(habit => !habit.isArchived);
+
+    if (activeHabits.length === 0) {
       setCurrentHabit(null);
       return;
     }
     
     let newHabit;
-    if (habits.length === 1) {
+    if (activeHabits.length === 1) {
       newHabit = habits[0];
     } else {
       do {
-        const randomIndex = Math.floor(Math.random() * habits.length);
-        newHabit = habits[randomIndex];
-      } while (newHabit?.id === currentHabit?.id && habits.length > 1);
+        const randomIndex = Math.floor(Math.random() * activeHabits.length);
+        newHabit = activeHabits[randomIndex];
+      } while (newHabit?.id === currentHabit?.id && activeHabits.length > 1);
     }
     
     setKey(prev => prev + 1);
