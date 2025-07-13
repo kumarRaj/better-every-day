@@ -54,7 +54,6 @@ export default function TabBar({ state, descriptors, navigation }: BottomTabBarP
             accessibilityRole="button"
             accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={options.tabBarAccessibilityLabel}
-            testID={options.tabBarTestID}
             onPress={onPress}
             style={[
               styles.tabItem,

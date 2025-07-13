@@ -11,7 +11,7 @@ A beautiful, modern habit tracking application built with Expo and React Native 
 - ⭐ Favorite habits system
 - 🔍 Search and filter capabilities
 - 🌙 Dark mode support
-- 🔔 Daily reminders (mobile only)
+- 🔔 Daily reminders with customizable time (mobile only)
 - 💾 Persistent storage with AsyncStorage
 - ✨ Beautiful animations with Reanimated
 
@@ -21,6 +21,7 @@ A beautiful, modern habit tracking application built with Expo and React Native 
 - React Native
 - Expo Router for navigation
 - React Native Reanimated for animations
+- Expo Notifications for daily reminders
 - Lucide Icons
 - AsyncStorage for data persistence
 - TypeScript for type safety
@@ -67,7 +68,7 @@ A beautiful, modern habit tracking application built with Expo and React Native 
 
 ### Settings Screen
 - Theme customization
-- Notification preferences
+- Daily reminder preferences with time selection
 - Data management
 - App information
 - Reset functionality

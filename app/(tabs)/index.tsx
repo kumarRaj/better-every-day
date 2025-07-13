@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeIn, FadeOut, SlideInRight, SlideOutLeft } from 'react-native-reanimated';
 import { useHabits } from '@/contexts/HabitContext';
+import { Habit } from '@/types/habits';
 import Colors from '@/constants/Colors';
 import Header from '@/components/Header';
 import HabitCard from '@/components/HabitCard';

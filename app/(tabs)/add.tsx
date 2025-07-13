@@ -40,11 +40,12 @@ export default function AddHabitScreen() {
       description: description.trim() || 'No description',
       category,
       isFavorite: false,
+      isArchived: false,
       createdAt: new Date().toISOString(),
     });
     
     triggerFeedback('success');
-    router.navigate('/(tabs)/');
+    router.navigate('/(tabs)');
   };
 
   return (
