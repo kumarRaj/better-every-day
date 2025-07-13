@@ -33,9 +33,23 @@
         }
       ]
     },
-    "plugins": ["expo-router", "expo-font", "expo-web-browser", "expo-notifications"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-web-browser",
+      "expo-notifications"
+    ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "7ebe1b9c-a04d-4035-85b2-810497e9a73d"
+      }
+    },
+    "android": {
+      "package": "com.kumarraj12.bettereveryday"
     }
   }
 }
