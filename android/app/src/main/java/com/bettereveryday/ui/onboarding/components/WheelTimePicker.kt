@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bettereveryday.ui.theme.LocalAppTheme
+import com.bettereveryday.ui.theme.accent
 import com.bettereveryday.ui.theme.TextPrimary
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map

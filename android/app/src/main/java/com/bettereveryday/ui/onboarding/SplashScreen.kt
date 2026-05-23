@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bettereveryday.ui.theme.BackgroundWarm
 import com.bettereveryday.ui.theme.LocalAppTheme
+import com.bettereveryday.ui.theme.accent
 import kotlinx.coroutines.delay
 
 @Composable

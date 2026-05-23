@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bettereveryday.ui.theme.CardBackground
 import com.bettereveryday.ui.theme.LocalAppTheme
+import com.bettereveryday.ui.theme.accentLight
+import com.bettereveryday.ui.theme.accent
 
 @Composable
 fun SelectionCard(

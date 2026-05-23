@@ -46,6 +46,7 @@ import com.bettereveryday.ui.theme.LocalAppTheme
 import com.bettereveryday.ui.theme.TextMuted
 import com.bettereveryday.ui.theme.TextPrimary
 import com.bettereveryday.ui.theme.accentLight
+import com.bettereveryday.ui.theme.accent
 import com.bettereveryday.ui.theme.gradientEnd
 import com.bettereveryday.ui.theme.gradientStart
 import com.bettereveryday.ui.theme.onAccent

@@ -69,7 +69,7 @@ private val monthNames = listOf(
 @Composable
 fun EditProfileSheet(viewModel: ProfileViewModel, onDismiss: () -> Unit) {
     val theme = LocalAppTheme.current
-    val sheetState = rememberModalBottomSheetState(skipPartialExpansion = true)
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val vmUserName by viewModel.userName.collectAsState()
     val vmBirthdateEnabled by viewModel.birthdateEnabled.collectAsState()

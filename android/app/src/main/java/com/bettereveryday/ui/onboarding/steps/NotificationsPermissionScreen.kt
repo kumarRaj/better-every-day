@@ -33,6 +33,7 @@ import com.bettereveryday.ui.onboarding.components.OnboardingScaffold
 import com.bettereveryday.ui.theme.CardBackground
 import com.bettereveryday.ui.theme.CheckGreen
 import com.bettereveryday.ui.theme.LocalAppTheme
+import com.bettereveryday.ui.theme.accent
 import com.bettereveryday.ui.theme.TextMuted
 import com.bettereveryday.ui.theme.TextPrimary
 

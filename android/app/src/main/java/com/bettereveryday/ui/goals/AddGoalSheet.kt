@@ -70,7 +70,7 @@ private val scheduleOptions = listOf(
 @Composable
 fun AddGoalSheet(viewModel: AddGoalViewModel, habitId: Long? = null, onDismiss: () -> Unit) {
     val theme = LocalAppTheme.current
-    val sheetState = rememberModalBottomSheetState(skipPartialExpansion = true)
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val title by viewModel.title.collectAsState()
     val categoryEmoji by viewModel.categoryEmoji.collectAsState()

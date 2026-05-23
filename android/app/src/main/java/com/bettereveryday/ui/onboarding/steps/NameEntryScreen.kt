@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.bettereveryday.ui.onboarding.OnboardingViewModel
 import com.bettereveryday.ui.onboarding.components.OnboardingScaffold
 import com.bettereveryday.ui.theme.LocalAppTheme
+import com.bettereveryday.ui.theme.accent
 import com.bettereveryday.ui.theme.TextMuted
 import com.bettereveryday.ui.theme.TextPrimary
 

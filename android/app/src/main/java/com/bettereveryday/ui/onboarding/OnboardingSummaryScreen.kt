@@ -28,9 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bettereveryday.ui.theme.BackgroundWarm
 import com.bettereveryday.ui.theme.LocalAppTheme
+import com.bettereveryday.ui.theme.onAccent
 import com.bettereveryday.ui.theme.TextMuted
 import com.bettereveryday.ui.theme.TextPrimary
 import com.bettereveryday.ui.theme.accentLight
+import com.bettereveryday.ui.theme.accent
 
 private val focusAreaLabels = mapOf(
     "MINDFULNESS" to "🧘 Mindfulness",
