@@ -1,0 +1,177 @@
+package com.bettereveryday.ui
+
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.ViewModelProvider
+import com.bettereveryday.data.local.db.AppDatabase
+import com.bettereveryday.data.prefs.UserPreferencesRepository
+import com.bettereveryday.ui.goals.GoalsScreen
+import com.bettereveryday.ui.goals.GoalsViewModel
+import com.bettereveryday.ui.insights.InsightsScreen
+import com.bettereveryday.ui.insights.InsightsViewModel
+import com.bettereveryday.ui.profile.ProfileScreen
+import com.bettereveryday.ui.profile.ProfileViewModel
+import com.bettereveryday.ui.theme.BetterEverydayTheme
+import com.bettereveryday.ui.theme.CardBackground
+import com.bettereveryday.ui.theme.LocalAppTheme
+import com.bettereveryday.ui.theme.TextMuted
+import com.bettereveryday.ui.theme.accent
+import com.bettereveryday.ui.theme.accentLight
+import com.bettereveryday.ui.today.TodayScreen
+import com.bettereveryday.ui.today.TodayViewModel
+
+enum class MainTab { Today, Goals, Insights, Profile }
+
+private val tabItems = listOf(
+    Triple(MainTab.Today, "☀️", "Today"),
+    Triple(MainTab.Goals, "🎯", "Goals"),
+    Triple(MainTab.Insights, "📈", "Insights"),
+    Triple(MainTab.Profile, "👤", "Profile"),
+)
+
+@Composable
+fun MainShell(
+    prefsRepository: UserPreferencesRepository,
+    db: AppDatabase,
+    onHabitClick: (Long) -> Unit = {},
+    onAddGoal: () -> Unit = {},
+    onEditHabit: (Long) -> Unit = {},
+    onEditProfile: () -> Unit = {},
+) {
+    val mainViewModel: MainViewModel = viewModel(
+        factory = object : ViewModelProvider.Factory {
+            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return MainViewModel(prefsRepository) as T
+            }
+        }
+    )
+    val activeTheme by mainViewModel.activeTheme.collectAsState()
+
+    BetterEverydayTheme(theme = activeTheme) {
+        val theme = LocalAppTheme.current
+        var selectedTab by remember { mutableStateOf(MainTab.Today) }
+
+        val todayViewModel: TodayViewModel = viewModel(
+            factory = object : ViewModelProvider.Factory {
+                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                    @Suppress("UNCHECKED_CAST")
+                    return TodayViewModel(db.habitDao(), db.completionDao(), prefsRepository) as T
+                }
+            }
+        )
+        val goalsViewModel: GoalsViewModel = viewModel(
+            factory = object : ViewModelProvider.Factory {
+                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                    @Suppress("UNCHECKED_CAST")
+                    return GoalsViewModel(db.habitDao(), db.completionDao()) as T
+                }
+            }
+        )
+        val insightsViewModel: InsightsViewModel = viewModel(
+            factory = object : ViewModelProvider.Factory {
+                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                    @Suppress("UNCHECKED_CAST")
+                    return InsightsViewModel(db.habitDao(), db.completionDao()) as T
+                }
+            }
+        )
+        val profileViewModel: ProfileViewModel = viewModel(
+            factory = object : ViewModelProvider.Factory {
+                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                    @Suppress("UNCHECKED_CAST")
+                    return ProfileViewModel(prefsRepository) as T
+                }
+            }
+        )
+
+        Scaffold(
+            bottomBar = {
+                Row(
+                    modifier = Modifier
+                        .windowInsetsPadding(WindowInsets.navigationBars)
+                        .padding(horizontal = 24.dp, vertical = 12.dp)
+                        .shadow(8.dp, RoundedCornerShape(32.dp))
+                        .clip(RoundedCornerShape(32.dp))
+                        .background(CardBackground)
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    tabItems.forEach { (tab, emoji, label) ->
+                        val isActive = selectedTab == tab
+                        val bgColor by animateColorAsState(
+                            targetValue = if (isActive) theme.accentLight else CardBackground,
+                            label = "tabBg_$label",
+                        )
+                        val contentColor by animateColorAsState(
+                            targetValue = if (isActive) theme.accent else TextMuted,
+                            label = "tabContent_$label",
+                        )
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(24.dp))
+                                .background(bgColor)
+                                .clickable { selectedTab = tab }
+                                .padding(horizontal = 12.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        ) {
+                            Text(text = emoji, fontSize = 14.sp)
+                            Text(
+                                text = label,
+                                fontSize = 13.sp,
+                                color = contentColor,
+                                fontWeight = if (isActive) FontWeight.Medium else FontWeight.Normal,
+                            )
+                        }
+                    }
+                }
+            },
+        ) { innerPadding ->
+            Box(modifier = Modifier.padding(innerPadding)) {
+                when (selectedTab) {
+                    MainTab.Today -> TodayScreen(
+                        viewModel = todayViewModel,
+                        onHabitClick = onHabitClick,
+                    )
+                    MainTab.Goals -> GoalsScreen(
+                        viewModel = goalsViewModel,
+                        onAddGoal = onAddGoal,
+                        onEditHabit = onEditHabit,
+                    )
+                    MainTab.Insights -> InsightsScreen(viewModel = insightsViewModel)
+                    MainTab.Profile -> ProfileScreen(
+                        viewModel = profileViewModel,
+                        onEditProfile = onEditProfile,
+                    )
+                }
+            }
+        }
+    }
+}

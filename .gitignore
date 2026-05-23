@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Media / recordings
+*.mov
+*.mp4
+screenshots/
+
+# Android build outputs
+android/build/
+android/app/build/
+android/.gradle/
+android/local.properties
+
+# IDE
+android/.idea/
+*.iml
