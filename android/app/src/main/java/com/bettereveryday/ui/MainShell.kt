@@ -5,13 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
@@ -103,24 +102,24 @@ fun MainShell(
                             targetValue = if (isActive) theme.accent else TextMuted,
                             label = "tabContent_$label",
                         )
-                        Row(
+                        Column(
                             modifier = Modifier
                                 .weight(1f)
-                                .clip(RoundedCornerShape(24.dp))
+                                .clip(RoundedCornerShape(16.dp))
                                 .background(bgColor)
                                 .clickable { selectedTab = tab }
-                                .padding(horizontal = 12.dp, vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
+                                .padding(horizontal = 4.dp, vertical = 8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
                         ) {
-                            Text(text = emoji, fontSize = 14.sp)
-                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = emoji, fontSize = 22.sp)
                             Text(
                                 text = label,
-                                fontSize = 13.sp,
+                                fontSize = 12.sp,
                                 color = contentColor,
                                 fontWeight = if (isActive) FontWeight.Medium else FontWeight.Normal,
                                 maxLines = 1,
+                                softWrap = false,
                             )
                         }
                     }
