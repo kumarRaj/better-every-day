@@ -3,6 +3,13 @@ package com.bettereveryday.ui.insights
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.BarChart
+import androidx.compose.material.icons.outlined.CalendarToday
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.LocalFireDepartment
+import androidx.compose.material.icons.outlined.TrackChanges
+import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,20 +82,20 @@ fun InsightsScreen(viewModel: InsightsViewModel) {
         ) {
             InsightStatCard(
                 modifier = Modifier.weight(1f),
-                icon = "🎯",
+                icon = Icons.Outlined.TrackChanges,
                 value = totalGoals.toString(),
                 label = "Total Goals",
             )
             InsightStatCard(
                 modifier = Modifier.weight(1f),
-                icon = "✓",
+                icon = Icons.Outlined.CheckCircle,
                 value = "$doneToday/$scheduledToday",
                 label = "Done Today",
                 iconColor = CheckGreen,
             )
             InsightStatCard(
                 modifier = Modifier.weight(1f),
-                icon = "🔥",
+                icon = Icons.Outlined.LocalFireDepartment,
                 value = "${bestStreak}d",
                 label = "Best Streak",
             )
@@ -101,12 +109,10 @@ fun InsightsScreen(viewModel: InsightsViewModel) {
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "📅 This Week",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
-                )
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Icon(imageVector = Icons.Outlined.CalendarToday, contentDescription = null, tint = theme.accent, modifier = Modifier.size(16.dp))
+                    Text(text = "This Week", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                }
                 Spacer(modifier = Modifier.height(16.dp))
                 WeeklyBarChart(weeklyData = weeklyData)
             }
@@ -120,12 +126,10 @@ fun InsightsScreen(viewModel: InsightsViewModel) {
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = "🔥 Streak Leaders",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextPrimary,
-                )
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Icon(imageVector = Icons.Outlined.LocalFireDepartment, contentDescription = null, tint = theme.accent, modifier = Modifier.size(16.dp))
+                    Text(text = "Streak Leaders", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                }
                 streakLeaders.forEach { leader ->
                     Row(
                         verticalAlignment = Alignment.Top,
@@ -177,12 +181,10 @@ fun InsightsScreen(viewModel: InsightsViewModel) {
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text(
-                        text = "📊 Frequency Breakdown",
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = TextPrimary,
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Icon(imageVector = Icons.Outlined.BarChart, contentDescription = null, tint = theme.accent, modifier = Modifier.size(16.dp))
+                        Text(text = "Frequency Breakdown", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    }
                     FrequencyRow(
                         label = "Daily",
                         count = streakLeaders.count { it.scheduleType == "DAILY" },
@@ -234,11 +236,12 @@ private fun FrequencyRow(
 @Composable
 private fun InsightStatCard(
     modifier: Modifier = Modifier,
-    icon: String,
+    icon: ImageVector,
     value: String,
     label: String,
     iconColor: Color? = null,
 ) {
+    val theme = LocalAppTheme.current
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
@@ -249,11 +252,12 @@ private fun InsightStatCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            if (iconColor != null) {
-                Text(text = icon, fontSize = 20.sp, color = iconColor)
-            } else {
-                Text(text = icon, fontSize = 20.sp)
-            }
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = iconColor ?: theme.accent,
+                modifier = Modifier.size(22.dp),
+            )
             Text(text = value, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
             Text(text = label, fontSize = 12.sp, color = TextMuted)
         }

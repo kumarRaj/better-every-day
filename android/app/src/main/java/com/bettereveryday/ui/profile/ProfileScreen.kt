@@ -21,9 +21,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Cake
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material.icons.outlined.ContactPage
+import androidx.compose.material.icons.outlined.Palette
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -112,13 +120,14 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditProfile: () -> Unit) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(
-            text = "👤 Personal Info",
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Bold,
-            color = theme.accent,
+        Row(
             modifier = Modifier.fillMaxWidth(),
-        )
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Icon(imageVector = Icons.Outlined.Person, contentDescription = null, tint = theme.accent, modifier = Modifier.size(14.dp))
+            Text(text = "Personal Info", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = theme.accent)
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -135,12 +144,12 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditProfile: () -> Unit) {
                         .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(text = "📇", fontSize = 18.sp)
+                    Icon(imageVector = Icons.Outlined.ContactPage, contentDescription = null, tint = theme.accent, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(text = "Name", fontSize = 15.sp, color = TextPrimary, modifier = Modifier.weight(1f))
                     Text(text = userName, fontSize = 15.sp, color = TextMuted)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = ">", fontSize = 15.sp, color = TextMuted)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(imageVector = Icons.Outlined.ChevronRight, contentDescription = null, tint = TextMuted, modifier = Modifier.size(18.dp))
                 }
 
                 HorizontalDivider(color = TextMuted.copy(alpha = 0.2f))
@@ -152,7 +161,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditProfile: () -> Unit) {
                         .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(text = "🎂", fontSize = 18.sp)
+                    Icon(imageVector = Icons.Outlined.Cake, contentDescription = null, tint = theme.accent, modifier = Modifier.size(20.dp))
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(text = "Birthdate", fontSize = 15.sp, color = TextPrimary, modifier = Modifier.weight(1f))
                     val birthdateText = if (birthdateEnabled) {
@@ -161,21 +170,22 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditProfile: () -> Unit) {
                         "Add your birthdate"
                     }
                     Text(text = birthdateText, fontSize = 15.sp, color = TextMuted)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = ">", fontSize = 15.sp, color = TextMuted)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Icon(imageVector = Icons.Outlined.ChevronRight, contentDescription = null, tint = TextMuted, modifier = Modifier.size(18.dp))
                 }
             }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Text(
-            text = "🎨 Appearance",
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Bold,
-            color = theme.accent,
+        Row(
             modifier = Modifier.fillMaxWidth(),
-        )
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Icon(imageVector = Icons.Outlined.Palette, contentDescription = null, tint = theme.accent, modifier = Modifier.size(14.dp))
+            Text(text = "Appearance", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = theme.accent)
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -244,7 +254,7 @@ private fun ThemeCard(
                             .background(appTheme.accent),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Text(text = "✓", fontSize = 11.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                        Icon(imageVector = Icons.Outlined.Check, contentDescription = "Selected", tint = Color.White, modifier = Modifier.size(12.dp))
                     }
                 }
             }

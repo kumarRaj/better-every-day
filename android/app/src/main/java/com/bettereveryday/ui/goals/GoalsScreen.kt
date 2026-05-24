@@ -16,13 +16,22 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.LocalFireDepartment
+import androidx.compose.material.icons.outlined.NotificationsNone
+import androidx.compose.material.icons.outlined.TrackChanges
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -97,19 +106,19 @@ fun GoalsScreen(
             ) {
                 StatCard(
                     modifier = Modifier.weight(1f),
-                    icon = "🎯",
+                    icon = Icons.Outlined.TrackChanges,
                     value = totalGoals.toString(),
                     label = "Total",
                 )
                 StatCard(
                     modifier = Modifier.weight(1f),
-                    icon = "🔥",
+                    icon = Icons.Outlined.LocalFireDepartment,
                     value = "${bestStreak}d",
                     label = "Best Streak",
                 )
                 StatCard(
                     modifier = Modifier.weight(1f),
-                    icon = "✓",
+                    icon = Icons.Outlined.CheckCircle,
                     value = doneToday.toString(),
                     label = "Done Today",
                     iconColor = CheckGreen,
@@ -143,11 +152,12 @@ fun GoalsScreen(
 @Composable
 private fun StatCard(
     modifier: Modifier = Modifier,
-    icon: String,
+    icon: ImageVector,
     value: String,
     label: String,
     iconColor: Color? = null,
 ) {
+    val theme = LocalAppTheme.current
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
@@ -158,11 +168,12 @@ private fun StatCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            if (iconColor != null) {
-                Text(text = icon, fontSize = 20.sp, color = iconColor)
-            } else {
-                Text(text = icon, fontSize = 20.sp)
-            }
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = iconColor ?: theme.accent,
+                modifier = Modifier.size(22.dp),
+            )
             Text(text = value, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
             Text(text = label, fontSize = 12.sp, color = TextMuted)
         }
@@ -236,7 +247,12 @@ private fun GoalRow(
                         .clickable(onClick = onEditClick),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text(text = "✏️", fontSize = 16.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.Edit,
+                        contentDescription = "Edit",
+                        tint = theme.onAccent,
+                        modifier = Modifier.size(18.dp),
+                    )
                 }
 
                 if (isCompletedToday) {
@@ -247,10 +263,20 @@ private fun GoalRow(
                             .background(CheckGreen),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Text(text = "✓", fontSize = 14.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                        Icon(
+                            imageVector = Icons.Outlined.Check,
+                            contentDescription = "Done",
+                            tint = Color.White,
+                            modifier = Modifier.size(16.dp),
+                        )
                     }
                 } else {
-                    Text(text = "🔔", fontSize = 14.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.NotificationsNone,
+                        contentDescription = "Reminder",
+                        tint = theme.accent,
+                        modifier = Modifier.size(20.dp),
+                    )
                 }
             }
         }

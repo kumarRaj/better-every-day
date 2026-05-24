@@ -11,11 +11,19 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Insights
+import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.TrackChanges
+import androidx.compose.material.icons.outlined.WbSunny
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,11 +57,13 @@ import com.bettereveryday.ui.today.TodayViewModel
 
 enum class MainTab { Today, Goals, Insights, Profile }
 
+private data class TabItem(val tab: MainTab, val icon: ImageVector, val label: String)
+
 private val tabItems = listOf(
-    Triple(MainTab.Today, "☀️", "Today"),
-    Triple(MainTab.Goals, "🎯", "Goals"),
-    Triple(MainTab.Insights, "📈", "Insights"),
-    Triple(MainTab.Profile, "👤", "Profile"),
+    TabItem(MainTab.Today, Icons.Outlined.WbSunny, "Today"),
+    TabItem(MainTab.Goals, Icons.Outlined.TrackChanges, "Goals"),
+    TabItem(MainTab.Insights, Icons.Outlined.Insights, "Insights"),
+    TabItem(MainTab.Profile, Icons.Outlined.Person, "Profile"),
 )
 
 @Composable
@@ -92,7 +102,7 @@ fun MainShell(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    tabItems.forEach { (tab, emoji, label) ->
+                    tabItems.forEach { (tab, icon, label) ->
                         val isActive = selectedTab == tab
                         val bgColor by animateColorAsState(
                             targetValue = if (isActive) theme.accentLight else CardBackground,
@@ -112,7 +122,12 @@ fun MainShell(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,
                         ) {
-                            Text(text = emoji, fontSize = 22.sp)
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = label,
+                                tint = contentColor,
+                                modifier = Modifier.size(22.dp),
+                            )
                             Text(
                                 text = label,
                                 fontSize = 12.sp,

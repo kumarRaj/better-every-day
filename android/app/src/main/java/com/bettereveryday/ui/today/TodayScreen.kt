@@ -19,9 +19,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.NotificationsNone
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -178,7 +182,12 @@ fun TodayScreen(viewModel: TodayViewModel, onHabitClick: (Long) -> Unit) {
                             color = TextMuted,
                         )
                     }
-                    Text(text = "🔔", fontSize = 18.sp)
+                    Icon(
+                        imageVector = Icons.Outlined.NotificationsNone,
+                        contentDescription = "Reminder",
+                        tint = theme.accent,
+                        modifier = Modifier.size(24.dp),
+                    )
                 }
             }
         }
@@ -288,7 +297,12 @@ private fun HabitRow(
                 contentAlignment = Alignment.Center,
             ) {
                 if (isCompleted) {
-                    Text(text = "✓", fontSize = 12.sp, color = Color.White, fontWeight = FontWeight.Bold)
+                    Icon(
+                        imageVector = Icons.Outlined.Check,
+                        contentDescription = "Done",
+                        tint = Color.White,
+                        modifier = Modifier.size(14.dp),
+                    )
                 }
             }
         }
