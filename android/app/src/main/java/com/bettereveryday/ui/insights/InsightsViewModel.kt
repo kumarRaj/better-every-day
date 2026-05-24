@@ -50,6 +50,9 @@ class InsightsViewModel(
     private val _doneToday = MutableStateFlow(0)
     val doneToday: StateFlow<Int> = _doneToday
 
+    private val _scheduledToday = MutableStateFlow(0)
+    val scheduledToday: StateFlow<Int> = _scheduledToday
+
     private val _bestStreak = MutableStateFlow(0)
     val bestStreak: StateFlow<Int> = _bestStreak
 
@@ -67,6 +70,14 @@ class InsightsViewModel(
             }.collect { (habits, todayCompletions, weekCompletions) ->
                 _totalGoals.value = habits.size
                 _doneToday.value = todayCompletions.size
+                _scheduledToday.value = habits.count { habit ->
+                    when (habit.scheduleType) {
+                        "DAILY" -> true
+                        "WEEKDAYS" -> today.dayOfWeek in DayOfWeek.MONDAY..DayOfWeek.FRIDAY
+                        "WEEKENDS" -> today.dayOfWeek == DayOfWeek.SATURDAY || today.dayOfWeek == DayOfWeek.SUNDAY
+                        else -> false
+                    }
+                }
 
                 val completionsByDate = weekCompletions.groupBy { it.completedDate }
                 val days = (0..6).map { offset ->

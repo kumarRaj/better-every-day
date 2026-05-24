@@ -47,6 +47,7 @@ fun InsightsScreen(viewModel: InsightsViewModel) {
     val totalGoals by viewModel.totalGoals.collectAsState()
     val doneToday by viewModel.doneToday.collectAsState()
     val bestStreak by viewModel.bestStreak.collectAsState()
+    val scheduledToday by viewModel.scheduledToday.collectAsState()
 
     Column(
         modifier = Modifier
@@ -73,12 +74,12 @@ fun InsightsScreen(viewModel: InsightsViewModel) {
                 modifier = Modifier.weight(1f),
                 icon = "🎯",
                 value = totalGoals.toString(),
-                label = "Total",
+                label = "Total Goals",
             )
             InsightStatCard(
                 modifier = Modifier.weight(1f),
                 icon = "✓",
-                value = doneToday.toString(),
+                value = "$doneToday/$scheduledToday",
                 label = "Done Today",
                 iconColor = CheckGreen,
             )
@@ -142,7 +143,7 @@ fun InsightsScreen(viewModel: InsightsViewModel) {
                             text = leader.title,
                             fontSize = 14.sp,
                             color = TextPrimary,
-                            modifier = Modifier.width(80.dp),
+                            modifier = Modifier.weight(1f),
                             maxLines = 1,
                         )
                         LinearProgressIndicator(
@@ -260,42 +261,55 @@ private fun WeeklyBarChart(weeklyData: List<DayBar>) {
     val maxTarget = weeklyData.maxOfOrNull { it.target } ?: 1
     val maxBarHeightDp = 120.dp
 
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.Bottom,
-    ) {
-        weeklyData.forEach { day ->
-            val theme = LocalAppTheme.current
-            val targetFraction = if (maxTarget == 0) 0f else day.target / maxTarget.toFloat()
-            val completedFraction = if (day.target == 0) 0f else (day.completed / day.target.toFloat()).coerceIn(0f, 1f)
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            weeklyData.forEach { day ->
+                val theme = LocalAppTheme.current
+                val targetFraction = if (maxTarget == 0) 0f else day.target / maxTarget.toFloat()
+                val completedFraction = if (day.target == 0) 0f else (day.completed / day.target.toFloat()).coerceIn(0f, 1f)
 
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom,
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(maxBarHeightDp * targetFraction.coerceAtLeast(0.05f))
-                        .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
-                        .background(theme.accentLight),
-                    contentAlignment = Alignment.BottomCenter,
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom,
                 ) {
-                    if (completedFraction > 0f) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .fillMaxSize(completedFraction)
-                                .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
-                                .background(theme.accent)
-                                .align(Alignment.BottomCenter),
-                        )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(maxBarHeightDp * targetFraction.coerceAtLeast(0.05f))
+                            .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
+                            .background(theme.accentLight),
+                        contentAlignment = Alignment.BottomCenter,
+                    ) {
+                        if (completedFraction > 0f) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxSize(completedFraction)
+                                    .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
+                                    .background(theme.accent)
+                                    .align(Alignment.BottomCenter),
+                            )
+                        }
                     }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = day.label, fontSize = 11.sp, color = TextMuted)
                 }
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = day.label, fontSize = 11.sp, color = TextMuted)
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .height(maxBarHeightDp),
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            (maxTarget downTo 0).forEach { tick ->
+                Text(text = "$tick", fontSize = 10.sp, color = TextMuted)
             }
         }
     }
