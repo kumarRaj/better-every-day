@@ -19,12 +19,12 @@ enum class AppTheme {
 
 val AppTheme.accent: Color
     get() = when (this) {
-        AppTheme.Sunrise -> Color(0xFFF0783C)
-        AppTheme.Ocean -> Color(0xFF2C9EB4)
-        AppTheme.Forest -> Color(0xFF2E9F6E)
-        AppTheme.Lavender -> Color(0xFF9873E8)
-        AppTheme.Midnight -> Color(0xFF4C75F2)
-        AppTheme.Rose -> Color(0xFFE86CA0)
+        AppTheme.Sunrise -> Color(0xFFF5734A)
+        AppTheme.Ocean -> Color(0xFF12A1BF)
+        AppTheme.Forest -> Color(0xFF2EA66B)
+        AppTheme.Lavender -> Color(0xFF9461DB)
+        AppTheme.Midnight -> Color(0xFF4773F2)
+        AppTheme.Rose -> Color(0xFFEB4799)
     }
 
 val AppTheme.accentLight: Color
@@ -32,22 +32,22 @@ val AppTheme.accentLight: Color
 
 val AppTheme.gradientStart: Color
     get() = when (this) {
-        AppTheme.Sunrise -> Color(0xFFF0783C)
-        AppTheme.Ocean -> Color(0xFF1A7A96)
-        AppTheme.Forest -> Color(0xFF2E9F6E)
-        AppTheme.Lavender -> Color(0xFF7B52D4)
-        AppTheme.Midnight -> Color(0xFF2E52C9)
-        AppTheme.Rose -> Color(0xFFC94882)
+        AppTheme.Sunrise -> Color(0xFFF5734A)
+        AppTheme.Ocean -> Color(0xFF12A1BF)
+        AppTheme.Forest -> Color(0xFF2EA66B)
+        AppTheme.Lavender -> Color(0xFF9461DB)
+        AppTheme.Midnight -> Color(0xFF4773F2)
+        AppTheme.Rose -> Color(0xFFEB4799)
     }
 
 val AppTheme.gradientEnd: Color
     get() = when (this) {
-        AppTheme.Sunrise -> Color(0xFFF5C842)
-        AppTheme.Ocean -> Color(0xFF5DD4EC)
-        AppTheme.Forest -> Color(0xFF7DD9B0)
-        AppTheme.Lavender -> Color(0xFFC9AFF5)
-        AppTheme.Midnight -> Color(0xFF8AAAF7)
-        AppTheme.Rose -> Color(0xFFF5A3C8)
+        AppTheme.Sunrise -> Color(0xFFFCB873)
+        AppTheme.Ocean -> Color(0xFF57D4DB)
+        AppTheme.Forest -> Color(0xFF85D68C)
+        AppTheme.Lavender -> Color(0xFFC7A6F5)
+        AppTheme.Midnight -> Color(0xFF85ADFF)
+        AppTheme.Rose -> Color(0xFFFA9EC7)
     }
 
 val AppTheme.onAccent: Color
