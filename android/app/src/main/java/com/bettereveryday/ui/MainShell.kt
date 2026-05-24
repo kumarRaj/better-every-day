@@ -6,9 +6,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
@@ -27,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.ViewModelProvider
+import com.bettereveryday.AppViewModelFactory
 import com.bettereveryday.data.local.db.AppDatabase
 import com.bettereveryday.data.prefs.UserPreferencesRepository
 import com.bettereveryday.ui.goals.GoalsScreen
@@ -58,62 +61,29 @@ private val tabItems = listOf(
 fun MainShell(
     prefsRepository: UserPreferencesRepository,
     db: AppDatabase,
+    factory: AppViewModelFactory,
     onHabitClick: (Long) -> Unit = {},
     onAddGoal: () -> Unit = {},
     onEditHabit: (Long) -> Unit = {},
     onEditProfile: () -> Unit = {},
 ) {
-    val mainViewModel: MainViewModel = viewModel(
-        factory = object : ViewModelProvider.Factory {
-            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                @Suppress("UNCHECKED_CAST")
-                return MainViewModel(prefsRepository) as T
-            }
-        }
-    )
+    val mainViewModel: MainViewModel = viewModel(factory = factory)
     val activeTheme by mainViewModel.activeTheme.collectAsState()
 
     BetterEverydayTheme(theme = activeTheme) {
         val theme = LocalAppTheme.current
         var selectedTab by remember { mutableStateOf(MainTab.Today) }
 
-        val todayViewModel: TodayViewModel = viewModel(
-            factory = object : ViewModelProvider.Factory {
-                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                    @Suppress("UNCHECKED_CAST")
-                    return TodayViewModel(db.habitDao(), db.completionDao(), prefsRepository) as T
-                }
-            }
-        )
-        val goalsViewModel: GoalsViewModel = viewModel(
-            factory = object : ViewModelProvider.Factory {
-                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                    @Suppress("UNCHECKED_CAST")
-                    return GoalsViewModel(db.habitDao(), db.completionDao()) as T
-                }
-            }
-        )
-        val insightsViewModel: InsightsViewModel = viewModel(
-            factory = object : ViewModelProvider.Factory {
-                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                    @Suppress("UNCHECKED_CAST")
-                    return InsightsViewModel(db.habitDao(), db.completionDao()) as T
-                }
-            }
-        )
-        val profileViewModel: ProfileViewModel = viewModel(
-            factory = object : ViewModelProvider.Factory {
-                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                    @Suppress("UNCHECKED_CAST")
-                    return ProfileViewModel(prefsRepository) as T
-                }
-            }
-        )
+        val todayViewModel: TodayViewModel = viewModel(factory = factory)
+        val goalsViewModel: GoalsViewModel = viewModel(factory = factory)
+        val insightsViewModel: InsightsViewModel = viewModel(factory = factory)
+        val profileViewModel: ProfileViewModel = viewModel(factory = factory)
 
         Scaffold(
             bottomBar = {
                 Row(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .windowInsetsPadding(WindowInsets.navigationBars)
                         .padding(horizontal = 24.dp, vertical = 12.dp)
                         .shadow(8.dp, RoundedCornerShape(32.dp))
@@ -135,19 +105,22 @@ fun MainShell(
                         )
                         Row(
                             modifier = Modifier
+                                .weight(1f)
                                 .clip(RoundedCornerShape(24.dp))
                                 .background(bgColor)
                                 .clickable { selectedTab = tab }
                                 .padding(horizontal = 12.dp, vertical = 6.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            horizontalArrangement = Arrangement.Center,
                         ) {
                             Text(text = emoji, fontSize = 14.sp)
+                            Spacer(modifier = Modifier.width(4.dp))
                             Text(
                                 text = label,
                                 fontSize = 13.sp,
                                 color = contentColor,
                                 fontWeight = if (isActive) FontWeight.Medium else FontWeight.Normal,
+                                maxLines = 1,
                             )
                         }
                     }

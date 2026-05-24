@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -14,7 +15,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bettereveryday.data.local.db.AppDatabase
 import com.bettereveryday.data.prefs.UserPreferencesRepository
-import com.bettereveryday.notifications.AlarmManagerScheduler
 import com.bettereveryday.ui.MainShell
 import com.bettereveryday.ui.goals.AddGoalSheet
 import com.bettereveryday.ui.goals.AddGoalViewModel
@@ -54,37 +54,21 @@ fun AppNavigation(
 
     BetterEverydayTheme(theme = activeTheme) {
         val navController = rememberNavController()
+        val context = LocalContext.current
 
-        val onboardingViewModel: OnboardingViewModel = viewModel(
-            factory = object : ViewModelProvider.Factory {
-                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                    @Suppress("UNCHECKED_CAST")
-                    return OnboardingViewModel(prefsRepository) as T
-                }
-            }
-        )
+        val factory = remember {
+            AppViewModelFactory(context = context, db = db, prefsRepository = prefsRepository)
+        }
+
+        val onboardingViewModel: OnboardingViewModel = viewModel(factory = factory)
 
         var showAddGoal by remember { mutableStateOf(false) }
         var editHabitId by remember { mutableLongStateOf(-1L) }
         var showEditProfile by remember { mutableStateOf(false) }
 
-        val profileViewModel: ProfileViewModel = viewModel(
-            factory = object : ViewModelProvider.Factory {
-                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                    @Suppress("UNCHECKED_CAST")
-                    return ProfileViewModel(prefsRepository) as T
-                }
-            }
-        )
+        val profileViewModel: ProfileViewModel = viewModel(factory = factory)
 
-        val addGoalViewModel: AddGoalViewModel = viewModel(
-            factory = object : ViewModelProvider.Factory {
-                override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                    @Suppress("UNCHECKED_CAST")
-                    return AddGoalViewModel(db.habitDao(), AlarmManagerScheduler(navController.context)) as T
-                }
-            }
-        )
+        val addGoalViewModel: AddGoalViewModel = viewModel(factory = factory)
 
         if (showEditProfile) {
             EditProfileSheet(
@@ -120,7 +104,11 @@ fun AppNavigation(
             composable("onboarding/1") {
                 NameEntryScreen(
                     viewModel = onboardingViewModel,
-                    onBack = { navController.popBackStack() },
+                    onBack = {
+                        navController.navigate("welcome") {
+                            popUpTo("onboarding/1") { inclusive = true }
+                        }
+                    },
                     onContinue = { navController.navigate("onboarding/2") },
                 )
             }
@@ -187,6 +175,7 @@ fun AppNavigation(
                 MainShell(
                     prefsRepository = prefsRepository,
                     db = db,
+                    factory = factory,
                     onHabitClick = { habitId -> navController.navigate("habit/$habitId") },
                     onAddGoal = { showAddGoal = true },
                     onEditHabit = { id -> editHabitId = id },

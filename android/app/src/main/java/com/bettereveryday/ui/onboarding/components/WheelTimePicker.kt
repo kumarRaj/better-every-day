@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -45,9 +46,12 @@ fun WheelTimePicker(
     val hours = (0..23).toList()
     val minutes = (0..59 step 5).toList()
 
-    val hourState = rememberLazyListState(initialFirstVisibleItemIndex = hour)
+    val hourState = rememberLazyListState(
+        initialFirstVisibleItemIndex = (hour - VISIBLE_ITEMS / 2).coerceAtLeast(0)
+    )
     val minuteState = rememberLazyListState(
-        initialFirstVisibleItemIndex = minutes.indexOfFirst { it >= minute }.coerceAtLeast(0)
+        initialFirstVisibleItemIndex = (minutes.indexOfFirst { it >= minute }
+            .coerceAtLeast(0) - VISIBLE_ITEMS / 2).coerceAtLeast(0)
     )
 
     var selectedHour by remember { mutableStateOf(hour) }
@@ -62,8 +66,9 @@ fun WheelTimePicker(
                 hourScrolling = scrolling
                 onScrollingChanged(hourScrolling || minuteScrolling)
                 if (!scrolling) {
-                    val index = hourState.firstVisibleItemIndex
-                    selectedHour = hours.getOrElse(index) { hour }
+                    val index = (hourState.firstVisibleItemIndex + VISIBLE_ITEMS / 2)
+                        .coerceIn(0, hours.lastIndex)
+                    selectedHour = hours[index]
                     onTimeChanged(selectedHour, minutes.getOrElse(selectedMinute) { minute })
                 }
             }
@@ -76,7 +81,8 @@ fun WheelTimePicker(
                 minuteScrolling = scrolling
                 onScrollingChanged(hourScrolling || minuteScrolling)
                 if (!scrolling) {
-                    val index = minuteState.firstVisibleItemIndex
+                    val index = (minuteState.firstVisibleItemIndex + VISIBLE_ITEMS / 2)
+                        .coerceIn(0, minutes.lastIndex)
                     selectedMinute = index
                     onTimeChanged(selectedHour, minutes.getOrElse(index) { minute })
                 }
@@ -100,13 +106,15 @@ fun WheelTimePicker(
             )
             LazyColumn(
                 state = hourState,
+                flingBehavior = rememberSnapFlingBehavior(lazyListState = hourState),
                 modifier = Modifier
                     .width(80.dp)
                     .height(ITEM_HEIGHT * VISIBLE_ITEMS),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 itemsIndexed(hours) { index, h ->
-                    val distance = kotlin.math.abs(index - hourState.firstVisibleItemIndex - (VISIBLE_ITEMS / 2))
+                    val centerIndex = hourState.firstVisibleItemIndex + VISIBLE_ITEMS / 2
+                    val distance = kotlin.math.abs(index - centerIndex)
                     val alpha = when (distance) {
                         0 -> 1f
                         1 -> 0.6f
@@ -150,13 +158,15 @@ fun WheelTimePicker(
             )
             LazyColumn(
                 state = minuteState,
+                flingBehavior = rememberSnapFlingBehavior(lazyListState = minuteState),
                 modifier = Modifier
                     .width(80.dp)
                     .height(ITEM_HEIGHT * VISIBLE_ITEMS),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 itemsIndexed(minutes) { index, m ->
-                    val distance = kotlin.math.abs(index - minuteState.firstVisibleItemIndex - (VISIBLE_ITEMS / 2))
+                    val centerIndex = minuteState.firstVisibleItemIndex + VISIBLE_ITEMS / 2
+                    val distance = kotlin.math.abs(index - centerIndex)
                     val alpha = when (distance) {
                         0 -> 1f
                         1 -> 0.6f
