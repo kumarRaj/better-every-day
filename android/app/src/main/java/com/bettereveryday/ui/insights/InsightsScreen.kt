@@ -1,6 +1,7 @@
 package com.bettereveryday.ui.insights
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
@@ -126,8 +128,8 @@ fun InsightsScreen(viewModel: InsightsViewModel) {
                 )
                 streakLeaders.forEach { leader ->
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.Top,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Box(
@@ -139,23 +141,27 @@ fun InsightsScreen(viewModel: InsightsViewModel) {
                         ) {
                             Text(text = leader.categoryEmoji, fontSize = 16.sp)
                         }
-                        Text(
-                            text = leader.title,
-                            fontSize = 14.sp,
-                            color = TextPrimary,
+                        Column(
                             modifier = Modifier.weight(1f),
-                            maxLines = 1,
-                        )
-                        LinearProgressIndicator(
-                            progress = { leader.streak / leader.maxStreak.toFloat().coerceAtLeast(1f) },
-                            modifier = Modifier.weight(1f),
-                            color = theme.accent,
-                            trackColor = theme.accentLight,
-                        )
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                        ) {
+                            Text(
+                                text = leader.title,
+                                fontSize = 14.sp,
+                                color = TextPrimary,
+                            )
+                            LinearProgressIndicator(
+                                progress = { leader.streak / leader.maxStreak.toFloat().coerceAtLeast(1f) },
+                                modifier = Modifier.fillMaxWidth(0.9f),
+                                color = theme.accent,
+                                trackColor = theme.accentLight,
+                            )
+                        }
                         Text(
                             text = "🔥 ${leader.streak}d",
                             fontSize = 13.sp,
                             color = theme.accent,
+                            modifier = Modifier.padding(top = 4.dp),
                         )
                     }
                 }
@@ -258,59 +264,114 @@ private fun InsightStatCard(
 private fun WeeklyBarChart(weeklyData: List<DayBar>) {
     if (weeklyData.isEmpty()) return
 
-    val maxTarget = weeklyData.maxOfOrNull { it.target } ?: 1
+    val maxTarget = (weeklyData.maxOfOrNull { it.target } ?: 0).coerceAtLeast(1)
     val maxBarHeightDp = 120.dp
+    val theme = LocalAppTheme.current
+    val axisValues = (maxTarget downTo 0).toList()
+    val axisWidth = 20.dp
 
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.Bottom,
         ) {
-            weeklyData.forEach { day ->
-                val theme = LocalAppTheme.current
-                val targetFraction = if (maxTarget == 0) 0f else day.target / maxTarget.toFloat()
-                val completedFraction = if (day.target == 0) 0f else (day.completed / day.target.toFloat()).coerceIn(0f, 1f)
-
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(maxBarHeightDp),
+            ) {
                 Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Bottom,
+                    modifier = Modifier.matchParentSize(),
+                    verticalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(maxBarHeightDp * targetFraction.coerceAtLeast(0.05f))
-                            .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
-                            .background(theme.accentLight),
-                        contentAlignment = Alignment.BottomCenter,
-                    ) {
-                        if (completedFraction > 0f) {
+                    axisValues.dropLast(1).forEach {
+                        HorizontalDivider(
+                            color = theme.accent.copy(alpha = 0.12f),
+                            thickness = 1.dp,
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(0.dp))
+                }
+
+                Row(
+                    modifier = Modifier.matchParentSize(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.Bottom,
+                ) {
+                    weeklyData.forEach { day ->
+                        val targetFraction = day.target / maxTarget.toFloat()
+                        val completedFraction = if (day.target == 0) 0f else {
+                            (day.completed / day.target.toFloat()).coerceIn(0f, 1f)
+                        }
+
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Bottom,
+                        ) {
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .fillMaxSize(completedFraction)
-                                    .clip(RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp))
-                                    .background(theme.accent)
-                                    .align(Alignment.BottomCenter),
-                            )
+                                    .height(maxBarHeightDp * targetFraction)
+                                    .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+                                    .background(theme.accent.copy(alpha = 0.18f))
+                                    .border(
+                                        width = 1.dp,
+                                        color = theme.accent.copy(alpha = 0.05f),
+                                        shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
+                                    ),
+                                contentAlignment = Alignment.BottomCenter,
+                            ) {
+                                if (completedFraction > 0f) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(maxBarHeightDp * targetFraction * completedFraction)
+                                            .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+                                            .background(theme.accent)
+                                            .align(Alignment.BottomCenter),
+                                    )
+                                }
+                            }
                         }
                     }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = day.label, fontSize = 11.sp, color = TextMuted)
+                }
+            }
+
+            Column(
+                modifier = Modifier
+                    .width(axisWidth)
+                    .height(maxBarHeightDp),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.End,
+            ) {
+                axisValues.forEach { tick ->
+                    Text(text = "$tick", fontSize = 10.sp, color = TextMuted)
                 }
             }
         }
 
-        Column(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .height(maxBarHeightDp),
-            verticalArrangement = Arrangement.SpaceBetween,
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            (maxTarget downTo 0).forEach { tick ->
-                Text(text = "$tick", fontSize = 10.sp, color = TextMuted)
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                weeklyData.forEach { day ->
+                    Box(
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(text = day.label, fontSize = 11.sp, color = TextMuted)
+                    }
+                }
             }
+            Spacer(modifier = Modifier.width(axisWidth))
         }
     }
 }
