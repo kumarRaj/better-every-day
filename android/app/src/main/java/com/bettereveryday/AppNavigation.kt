@@ -1,6 +1,7 @@
 package com.bettereveryday
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -42,6 +43,7 @@ import com.bettereveryday.ui.today.HabitDetailViewModel
 fun AppNavigation(
     prefsRepository: UserPreferencesRepository,
     db: AppDatabase,
+    openHomeRequestId: Int = 0,
 ) {
     val prefs by prefsRepository.userPreferences.collectAsState(initial = null)
     val activeTheme = when (prefs?.selectedTheme) {
@@ -69,6 +71,15 @@ fun AppNavigation(
         var showEditProfile by remember { mutableStateOf(false) }
 
         val profileViewModel: ProfileViewModel = viewModel(factory = factory)
+
+        LaunchedEffect(openHomeRequestId, prefs?.onboardingComplete) {
+            if (openHomeRequestId > 0 && prefs?.onboardingComplete == true) {
+                navController.navigate("main") {
+                    launchSingleTop = true
+                    popUpTo("main")
+                }
+            }
+        }
 
         if (showEditProfile) {
             EditProfileSheet(
@@ -180,6 +191,7 @@ fun AppNavigation(
                     prefsRepository = prefsRepository,
                     db = db,
                     factory = factory,
+                    openHomeRequestId = openHomeRequestId,
                     onHabitClick = { habitId -> navController.navigate("habit/$habitId") },
                     onAddGoal = {
                         addGoalSheetSession++

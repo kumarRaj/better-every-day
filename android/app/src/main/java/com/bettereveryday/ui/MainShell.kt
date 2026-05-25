@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -71,6 +72,7 @@ fun MainShell(
     prefsRepository: UserPreferencesRepository,
     db: AppDatabase,
     factory: AppViewModelFactory,
+    openHomeRequestId: Int = 0,
     onHabitClick: (Long) -> Unit = {},
     onAddGoal: () -> Unit = {},
     onEditHabit: (Long) -> Unit = {},
@@ -82,6 +84,12 @@ fun MainShell(
     BetterEverydayTheme(theme = activeTheme) {
         val theme = LocalAppTheme.current
         var selectedTab by remember { mutableStateOf(MainTab.Today) }
+
+        LaunchedEffect(openHomeRequestId) {
+            if (openHomeRequestId > 0) {
+                selectedTab = MainTab.Today
+            }
+        }
 
         val todayViewModel: TodayViewModel = viewModel(factory = factory)
         val goalsViewModel: GoalsViewModel = viewModel(factory = factory)
