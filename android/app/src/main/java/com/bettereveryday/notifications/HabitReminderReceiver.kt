@@ -8,6 +8,10 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.bettereveryday.data.local.db.AppDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class HabitReminderReceiver : BroadcastReceiver() {
 
@@ -36,5 +40,19 @@ class HabitReminderReceiver : BroadcastReceiver() {
             .build()
 
         NotificationManagerCompat.from(context).notify(habitId.toInt(), notification)
+
+        if (habitId == -1L) return
+
+        val pendingResult = goAsync()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val habit = AppDatabase.getInstance(context).habitDao().getHabitById(habitId)
+                if (habit != null) {
+                    AlarmManagerScheduler(context).schedule(habit)
+                }
+            } finally {
+                pendingResult.finish()
+            }
+        }
     }
 }
