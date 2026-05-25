@@ -83,7 +83,7 @@ fun AddGoalSheet(viewModel: AddGoalViewModel, habitId: Long? = null, onDismiss: 
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(habitId) {
-        if (habitId != null) viewModel.loadHabit(habitId)
+        viewModel.startSession(habitId)
     }
 
     val isEditMode = editingHabit != null

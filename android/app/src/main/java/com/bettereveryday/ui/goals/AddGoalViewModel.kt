@@ -14,22 +14,22 @@ class AddGoalViewModel(
     private val alarmScheduler: AlarmScheduler,
 ) : ViewModel() {
 
-    private val _title = MutableStateFlow("")
+    private val _title = MutableStateFlow(DEFAULT_TITLE)
     val title: StateFlow<String> = _title
 
-    private val _categoryEmoji = MutableStateFlow("⭐")
+    private val _categoryEmoji = MutableStateFlow(DEFAULT_CATEGORY_EMOJI)
     val categoryEmoji: StateFlow<String> = _categoryEmoji
 
-    private val _focusArea = MutableStateFlow("")
+    private val _focusArea = MutableStateFlow(DEFAULT_FOCUS_AREA)
     val focusArea: StateFlow<String> = _focusArea
 
-    private val _scheduleType = MutableStateFlow("DAILY")
+    private val _scheduleType = MutableStateFlow(DEFAULT_SCHEDULE_TYPE)
     val scheduleType: StateFlow<String> = _scheduleType
 
-    private val _reminderHour = MutableStateFlow(8)
+    private val _reminderHour = MutableStateFlow(DEFAULT_REMINDER_HOUR)
     val reminderHour: StateFlow<Int> = _reminderHour
 
-    private val _reminderMinute = MutableStateFlow(0)
+    private val _reminderMinute = MutableStateFlow(DEFAULT_REMINDER_MINUTE)
     val reminderMinute: StateFlow<Int> = _reminderMinute
 
     private val _editingHabit = MutableStateFlow<HabitEntity?>(null)
@@ -38,8 +38,17 @@ class AddGoalViewModel(
     private val _isSaving = MutableStateFlow(false)
     val isSaving: StateFlow<Boolean> = _isSaving
 
+    fun startSession(habitId: Long?) {
+        if (habitId == null) {
+            resetForm()
+        } else {
+            loadHabit(habitId)
+        }
+    }
+
     fun loadHabit(id: Long) {
         viewModelScope.launch {
+            resetForm()
             val habit = habitDao.getHabitById(id) ?: return@launch
             _editingHabit.value = habit
             _title.value = habit.title
@@ -62,23 +71,33 @@ class AddGoalViewModel(
 
     fun saveHabit(onDone: () -> Unit) {
         viewModelScope.launch {
+            if (_isSaving.value) return@launch
             _isSaving.value = true
-            val editing = _editingHabit.value
-            val habit = HabitEntity(
-                id = editing?.id ?: 0,
-                title = _title.value,
-                categoryEmoji = _categoryEmoji.value,
-                focusArea = _focusArea.value,
-                scheduleType = _scheduleType.value,
-                reminderHour = _reminderHour.value,
-                reminderMinute = _reminderMinute.value,
-                createdAt = editing?.createdAt ?: System.currentTimeMillis(),
-                sortOrder = editing?.sortOrder ?: 0,
-            )
-            if (editing == null) habitDao.insertHabit(habit) else habitDao.updateHabit(habit)
-            alarmScheduler.schedule(habit)
-            _isSaving.value = false
-            onDone()
+            try {
+                val editing = _editingHabit.value
+                val draftHabit = HabitEntity(
+                    id = editing?.id ?: 0,
+                    title = _title.value,
+                    categoryEmoji = _categoryEmoji.value,
+                    focusArea = _focusArea.value,
+                    scheduleType = _scheduleType.value,
+                    reminderHour = _reminderHour.value,
+                    reminderMinute = _reminderMinute.value,
+                    createdAt = editing?.createdAt ?: System.currentTimeMillis(),
+                    sortOrder = editing?.sortOrder ?: 0,
+                )
+                val savedHabit = if (editing == null) {
+                    draftHabit.copy(id = habitDao.insertHabit(draftHabit))
+                } else {
+                    habitDao.updateHabit(draftHabit)
+                    draftHabit
+                }
+                alarmScheduler.schedule(savedHabit)
+                resetForm()
+                onDone()
+            } finally {
+                _isSaving.value = false
+            }
         }
     }
 
@@ -87,7 +106,28 @@ class AddGoalViewModel(
             val habit = _editingHabit.value ?: return@launch
             alarmScheduler.cancel(habit.id)
             habitDao.deleteHabit(habit)
+            resetForm()
             onDone()
         }
+    }
+
+    private fun resetForm() {
+        _title.value = DEFAULT_TITLE
+        _categoryEmoji.value = DEFAULT_CATEGORY_EMOJI
+        _focusArea.value = DEFAULT_FOCUS_AREA
+        _scheduleType.value = DEFAULT_SCHEDULE_TYPE
+        _reminderHour.value = DEFAULT_REMINDER_HOUR
+        _reminderMinute.value = DEFAULT_REMINDER_MINUTE
+        _editingHabit.value = null
+        _isSaving.value = false
+    }
+
+    private companion object {
+        const val DEFAULT_TITLE = ""
+        const val DEFAULT_CATEGORY_EMOJI = "⭐"
+        const val DEFAULT_FOCUS_AREA = ""
+        const val DEFAULT_SCHEDULE_TYPE = "DAILY"
+        const val DEFAULT_REMINDER_HOUR = 8
+        const val DEFAULT_REMINDER_MINUTE = 0
     }
 }

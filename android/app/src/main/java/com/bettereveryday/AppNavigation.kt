@@ -3,6 +3,7 @@ package com.bettereveryday
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,12 +64,11 @@ fun AppNavigation(
         val onboardingViewModel: OnboardingViewModel = viewModel(factory = factory)
 
         var showAddGoal by remember { mutableStateOf(false) }
+        var addGoalSheetSession by remember { mutableIntStateOf(0) }
         var editHabitId by remember { mutableLongStateOf(-1L) }
         var showEditProfile by remember { mutableStateOf(false) }
 
         val profileViewModel: ProfileViewModel = viewModel(factory = factory)
-
-        val addGoalViewModel: AddGoalViewModel = viewModel(factory = factory)
 
         if (showEditProfile) {
             EditProfileSheet(
@@ -78,6 +78,10 @@ fun AppNavigation(
         }
 
         if (showAddGoal || editHabitId >= 0L) {
+            val addGoalViewModel: AddGoalViewModel = viewModel(
+                key = "add_goal_sheet_$addGoalSheetSession",
+                factory = factory,
+            )
             AddGoalSheet(
                 viewModel = addGoalViewModel,
                 habitId = if (editHabitId >= 0L) editHabitId else null,
@@ -177,8 +181,16 @@ fun AppNavigation(
                     db = db,
                     factory = factory,
                     onHabitClick = { habitId -> navController.navigate("habit/$habitId") },
-                    onAddGoal = { showAddGoal = true },
-                    onEditHabit = { id -> editHabitId = id },
+                    onAddGoal = {
+                        addGoalSheetSession++
+                        editHabitId = -1L
+                        showAddGoal = true
+                    },
+                    onEditHabit = { id ->
+                        addGoalSheetSession++
+                        showAddGoal = false
+                        editHabitId = id
+                    },
                     onEditProfile = { showEditProfile = true },
                 )
             }
@@ -196,7 +208,11 @@ fun AppNavigation(
                 HabitDetailScreen(
                     viewModel = habitDetailViewModel,
                     onBack = { navController.popBackStack() },
-                    onEdit = { id -> editHabitId = id },
+                    onEdit = { id ->
+                        addGoalSheetSession++
+                        showAddGoal = false
+                        editHabitId = id
+                    },
                 )
             }
         }
