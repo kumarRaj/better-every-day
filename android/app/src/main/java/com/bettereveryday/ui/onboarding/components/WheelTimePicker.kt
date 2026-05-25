@@ -3,6 +3,7 @@ package com.bettereveryday.ui.onboarding.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,7 +31,6 @@ import com.bettereveryday.ui.theme.LocalAppTheme
 import com.bettereveryday.ui.theme.accent
 import com.bettereveryday.ui.theme.TextPrimary
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 
 private val ITEM_HEIGHT = 48.dp
 private val VISIBLE_ITEMS = 5
@@ -45,19 +45,35 @@ fun WheelTimePicker(
     val theme = LocalAppTheme.current
     val hours = (0..23).toList()
     val minutes = (0..59 step 5).toList()
+    val hourIndex = hour.coerceIn(0, hours.lastIndex)
+    val minuteIndex = minutes.indexOfFirst { it >= minute }.coerceAtLeast(0)
+    val pickerPadding = PaddingValues(vertical = ITEM_HEIGHT * (VISIBLE_ITEMS / 2))
 
     val hourState = rememberLazyListState(
-        initialFirstVisibleItemIndex = (hour - VISIBLE_ITEMS / 2).coerceAtLeast(0)
+        initialFirstVisibleItemIndex = hourIndex
     )
     val minuteState = rememberLazyListState(
-        initialFirstVisibleItemIndex = (minutes.indexOfFirst { it >= minute }
-            .coerceAtLeast(0) - VISIBLE_ITEMS / 2).coerceAtLeast(0)
+        initialFirstVisibleItemIndex = minuteIndex
     )
 
-    var selectedHour by remember { mutableStateOf(hour) }
-    var selectedMinute by remember { mutableStateOf(minutes.indexOfFirst { it >= minute }.coerceAtLeast(0)) }
+    var selectedHour by remember { mutableStateOf(hourIndex) }
+    var selectedMinuteIndex by remember { mutableStateOf(minuteIndex) }
     var hourScrolling by remember { mutableStateOf(false) }
     var minuteScrolling by remember { mutableStateOf(false) }
+
+    LaunchedEffect(hourIndex) {
+        if (!hourScrolling && selectedHour != hourIndex) {
+            selectedHour = hourIndex
+            hourState.scrollToItem(hourIndex)
+        }
+    }
+
+    LaunchedEffect(minuteIndex) {
+        if (!minuteScrolling && selectedMinuteIndex != minuteIndex) {
+            selectedMinuteIndex = minuteIndex
+            minuteState.scrollToItem(minuteIndex)
+        }
+    }
 
     LaunchedEffect(hourState) {
         snapshotFlow { hourState.isScrollInProgress }
@@ -66,10 +82,9 @@ fun WheelTimePicker(
                 hourScrolling = scrolling
                 onScrollingChanged(hourScrolling || minuteScrolling)
                 if (!scrolling) {
-                    val index = (hourState.firstVisibleItemIndex + VISIBLE_ITEMS / 2)
-                        .coerceIn(0, hours.lastIndex)
+                    val index = hourState.firstVisibleItemIndex.coerceIn(0, hours.lastIndex)
                     selectedHour = hours[index]
-                    onTimeChanged(selectedHour, minutes.getOrElse(selectedMinute) { minute })
+                    onTimeChanged(selectedHour, minutes.getOrElse(selectedMinuteIndex) { minute })
                 }
             }
     }
@@ -81,9 +96,8 @@ fun WheelTimePicker(
                 minuteScrolling = scrolling
                 onScrollingChanged(hourScrolling || minuteScrolling)
                 if (!scrolling) {
-                    val index = (minuteState.firstVisibleItemIndex + VISIBLE_ITEMS / 2)
-                        .coerceIn(0, minutes.lastIndex)
-                    selectedMinute = index
+                    val index = minuteState.firstVisibleItemIndex.coerceIn(0, minutes.lastIndex)
+                    selectedMinuteIndex = index
                     onTimeChanged(selectedHour, minutes.getOrElse(index) { minute })
                 }
             }
@@ -107,13 +121,14 @@ fun WheelTimePicker(
             LazyColumn(
                 state = hourState,
                 flingBehavior = rememberSnapFlingBehavior(lazyListState = hourState),
+                contentPadding = pickerPadding,
                 modifier = Modifier
                     .width(80.dp)
                     .height(ITEM_HEIGHT * VISIBLE_ITEMS),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 itemsIndexed(hours) { index, h ->
-                    val centerIndex = hourState.firstVisibleItemIndex + VISIBLE_ITEMS / 2
+                    val centerIndex = hourState.firstVisibleItemIndex
                     val distance = kotlin.math.abs(index - centerIndex)
                     val alpha = when (distance) {
                         0 -> 1f
@@ -159,13 +174,14 @@ fun WheelTimePicker(
             LazyColumn(
                 state = minuteState,
                 flingBehavior = rememberSnapFlingBehavior(lazyListState = minuteState),
+                contentPadding = pickerPadding,
                 modifier = Modifier
                     .width(80.dp)
                     .height(ITEM_HEIGHT * VISIBLE_ITEMS),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 itemsIndexed(minutes) { index, m ->
-                    val centerIndex = minuteState.firstVisibleItemIndex + VISIBLE_ITEMS / 2
+                    val centerIndex = minuteState.firstVisibleItemIndex
                     val distance = kotlin.math.abs(index - centerIndex)
                     val alpha = when (distance) {
                         0 -> 1f
