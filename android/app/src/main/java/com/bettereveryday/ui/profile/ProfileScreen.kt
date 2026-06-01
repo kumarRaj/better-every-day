@@ -196,7 +196,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditProfile: () -> Unit) {
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
+            columns = GridCells.Fixed(3),
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(max = 600.dp),
@@ -277,9 +277,7 @@ private fun ThemeCard(
 ) {
     Card(
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) appTheme.accentLight else Color.White,
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         modifier = Modifier
             .fillMaxWidth()
@@ -289,35 +287,34 @@ private fun ThemeCard(
             )
             .clickable(onClick = onClick),
     ) {
-        Column {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(70.dp)
-                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-                    .background(Brush.linearGradient(listOf(appTheme.gradientStart, appTheme.gradientEnd))),
-            ) {
-                if (isSelected) {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .padding(6.dp)
-                            .size(20.dp)
-                            .clip(CircleShape)
-                            .background(appTheme.accent),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Icon(imageVector = Icons.Outlined.Check, contentDescription = "Selected", tint = Color.White, modifier = Modifier.size(12.dp))
-                    }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Brush.linearGradient(listOf(appTheme.gradientStart, appTheme.gradientEnd)))
+        ) {
+            Column {
+                Spacer(modifier = Modifier.height(40.dp))
+                Row(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Text(text = emoji, fontSize = 16.sp)
+                    Text(text = label, fontSize = 13.sp, color = Color.White, fontWeight = FontWeight.Medium)
                 }
             }
-            Row(
-                modifier = Modifier.padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                Text(text = emoji, fontSize = 16.sp)
-                Text(text = label, fontSize = 13.sp, color = TextPrimary, fontWeight = FontWeight.Medium)
+            if (isSelected) {
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(6.dp)
+                        .size(22.dp)
+                        .clip(CircleShape)
+                        .background(Color.White),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(imageVector = Icons.Outlined.Check, contentDescription = "Selected", tint = appTheme.accent, modifier = Modifier.size(16.dp))
+                }
             }
         }
     }

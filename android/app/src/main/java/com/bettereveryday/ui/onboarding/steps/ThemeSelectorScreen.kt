@@ -89,69 +89,65 @@ fun ThemeSelectorScreen(
             )
             Spacer(modifier = Modifier.height(24.dp))
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
+                columns = GridCells.Fixed(3),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.height(420.dp)
+                modifier = Modifier.height(280.dp)
             ) {
                 items(themeOptions) { option ->
                     val isSelected = option.value == selectedTheme
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .then(
+                                if (isSelected) Modifier.border(
+                                    2.dp,
+                                    option.appTheme.accent,
+                                    RoundedCornerShape(12.dp)
+                                ) else Modifier
+                            )
                             .clickable { viewModel.setTheme(option.value) },
                         shape = RoundedCornerShape(12.dp),
                         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = if (isSelected) option.appTheme.accentLight else Color.White
-                        )
+                        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
                     ) {
-                        Column {
-                            Box(modifier = Modifier.fillMaxWidth()) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(80.dp)
-                                        .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-                                        .background(
-                                            Brush.linearGradient(
-                                                listOf(option.appTheme.gradientStart, option.appTheme.gradientEnd)
-                                            )
-                                        )
-                                        .then(
-                                            if (isSelected) Modifier.border(
-                                                2.dp,
-                                                option.appTheme.accent,
-                                                RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
-                                            ) else Modifier
-                                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    Brush.linearGradient(
+                                        listOf(option.appTheme.gradientStart, option.appTheme.gradientEnd)
+                                    )
                                 )
-                                if (isSelected) {
-                                    Box(
-                                        modifier = Modifier
-                                            .padding(8.dp)
-                                            .size(24.dp)
-                                            .clip(CircleShape)
-                                            .background(option.appTheme.accent)
-                                            .align(Alignment.TopEnd),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(text = "✓", color = Color.White, fontSize = 12.sp)
-                                    }
+                        ) {
+                            Column {
+                                Spacer(modifier = Modifier.height(40.dp))
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(text = option.emoji, fontSize = 20.sp)
+                                    Spacer(modifier = Modifier.size(4.dp))
+                                    Text(
+                                        text = option.label,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
                                 }
                             }
-                            Row(
-                                modifier = Modifier.padding(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(text = option.emoji, fontSize = 20.sp)
-                                Spacer(modifier = Modifier.size(4.dp))
-                                Text(
-                                    text = option.label,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = TextPrimary
-                                )
+                            if (isSelected) {
+                                Box(
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                        .size(22.dp)
+                                        .clip(CircleShape)
+                                        .background(Color.White)
+                                        .align(Alignment.TopEnd),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(text = "✓", color = option.appTheme.accent, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                                }
                             }
                         }
                     }
