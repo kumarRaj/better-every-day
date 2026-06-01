@@ -1,7 +1,10 @@
 package com.bettereveryday.ui.onboarding.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -75,12 +78,13 @@ fun OnboardingScaffold(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "<",
-                fontSize = 20.sp,
-                color = theme.accent,
-                modifier = Modifier.clickable { onBack() }
-            )
+            IconButton(onClick = onBack) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = theme.accent,
+                )
+            }
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = "Step $currentStep of $totalSteps",

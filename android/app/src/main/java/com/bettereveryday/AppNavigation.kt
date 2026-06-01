@@ -220,11 +220,6 @@ fun AppNavigation(
                 HabitDetailScreen(
                     viewModel = habitDetailViewModel,
                     onBack = { navController.popBackStack() },
-                    onEdit = { id ->
-                        addGoalSheetSession++
-                        showAddGoal = false
-                        editHabitId = id
-                    },
                 )
             }
         }
