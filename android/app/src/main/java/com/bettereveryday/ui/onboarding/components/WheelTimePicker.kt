@@ -32,8 +32,8 @@ import com.bettereveryday.ui.theme.accent
 import com.bettereveryday.ui.theme.TextPrimary
 import kotlinx.coroutines.flow.distinctUntilChanged
 
-private val ITEM_HEIGHT = 48.dp
-private val VISIBLE_ITEMS = 5
+private val ITEM_HEIGHT = 36.dp
+private val VISIBLE_ITEMS = 3
 
 @Composable
 fun WheelTimePicker(
@@ -144,7 +144,7 @@ fun WheelTimePicker(
                     ) {
                         Text(
                             text = h.toString().padStart(2, '0'),
-                            fontSize = 22.sp,
+                            fontSize = 16.sp,
                             fontWeight = if (distance == 0) FontWeight.Bold else FontWeight.Normal,
                             color = TextPrimary
                         )
@@ -155,7 +155,7 @@ fun WheelTimePicker(
 
         Text(
             text = ":",
-            fontSize = 28.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = TextPrimary,
             modifier = Modifier.width(24.dp)
@@ -197,7 +197,7 @@ fun WheelTimePicker(
                     ) {
                         Text(
                             text = m.toString().padStart(2, '0'),
-                            fontSize = 22.sp,
+                            fontSize = 16.sp,
                             fontWeight = if (distance == 0) FontWeight.Bold else FontWeight.Normal,
                             color = TextPrimary
                         )
