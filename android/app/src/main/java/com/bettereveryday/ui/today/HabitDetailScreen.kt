@@ -23,6 +23,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -136,74 +139,11 @@ fun HabitDetailScreen(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             StatCard(emoji = "🔥", value = "${currentStreak}d", label = "Current Streak", modifier = Modifier.weight(1f))
-            StatCard(emoji = "🏆", value = "${longestStreak}d", label = "Longest Streak", modifier = Modifier.weight(1f))
+            StatCard(emoji = "🏆", value = "${longestStreak}d", label = "Best Streak", modifier = Modifier.weight(1f))
             StatCard(emoji = "✓", value = "$totalCompletions", label = "Total Done", modifier = Modifier.weight(1f))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(CardBackground)
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(text = "Today", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
-            Spacer(modifier = Modifier.weight(1f))
-            val circleColor by animateColorAsState(
-                targetValue = if (completedToday) CheckGreen else Color.Transparent,
-                label = "todayCircle",
-            )
-            val borderColor by animateColorAsState(
-                targetValue = if (completedToday) CheckGreen else TextMuted,
-                label = "todayBorder",
-            )
-            Box(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clip(CircleShape)
-                    .background(circleColor)
-                    .then(
-                        if (!completedToday) Modifier.background(
-                            Color.Transparent,
-                            CircleShape,
-                        ) else Modifier
-                    )
-                    .clickable { viewModel.toggleToday() },
-                contentAlignment = Alignment.Center,
-            ) {
-                if (!completedToday) {
-                    Box(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(CircleShape)
-                            .background(Color.Transparent),
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(CircleShape)
-                                .background(Color.Transparent)
-                                .then(
-                                    Modifier.background(
-                                        color = Color.Transparent,
-                                        shape = CircleShape,
-                                    )
-                                ),
-                        )
-                    }
-                    Text(text = "○", fontSize = 28.sp, color = TextMuted)
-                } else {
-                    Text(text = "✓", fontSize = 16.sp, color = Color.White, fontWeight = FontWeight.Bold)
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
         Text(
             text = "History",
             fontSize = 18.sp,
@@ -216,7 +156,13 @@ fun HabitDetailScreen(
 
         val completionDates = completions.map { it.completedDate }.toSet()
         val today = LocalDate.now()
-        val cells = (27 downTo 0).map { daysAgo -> today.minusDays(daysAgo.toLong()) }
+        var displayMonth by remember { mutableStateOf(today.withDayOfMonth(1)) }
+
+        val firstOfMonth = displayMonth
+        val leadingBlanks = firstOfMonth.dayOfWeek.value - 1
+        val daysInMonth = firstOfMonth.lengthOfMonth()
+        val totalCells = leadingBlanks + daysInMonth
+        val rows = (totalCells + 6) / 7
 
         Column(
             modifier = Modifier
@@ -224,6 +170,39 @@ fun HabitDetailScreen(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
+            // Month + year header with prev/next arrows
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "<",
+                    fontSize = 18.sp,
+                    color = TextPrimary,
+                    modifier = Modifier
+                        .clickable { displayMonth = displayMonth.minusMonths(1) }
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                )
+                Text(
+                    text = displayMonth.month.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault()) +
+                        " ${displayMonth.year}",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextPrimary,
+                    modifier = Modifier.weight(1f),
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                )
+                val isCurrentMonth = displayMonth.year == today.year && displayMonth.month == today.month
+                Text(
+                    text = ">",
+                    fontSize = 18.sp,
+                    color = if (isCurrentMonth) TextMuted.copy(alpha = 0.3f) else TextPrimary,
+                    modifier = Modifier
+                        .then(if (!isCurrentMonth) Modifier.clickable { displayMonth = displayMonth.plusMonths(1) } else Modifier)
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                )
+            }
+            // Day-of-week headers
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -238,28 +217,49 @@ fun HabitDetailScreen(
                     )
                 }
             }
-            for (week in 0 until 4) {
+            for (row in 0 until rows) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     for (col in 0 until 7) {
-                        val date = cells[week * 7 + col]
-                        val isFuture = date.isAfter(today)
-                        val isDone = completionDates.contains(date.toString())
-                        Box(
-                            modifier = Modifier
-                                .weight(1f)
-                                .aspectRatio(1f)
-                                .clip(CircleShape)
-                                .background(
-                                    when {
-                                        isFuture -> Color.Transparent
-                                        isDone -> theme.accent
-                                        else -> CardBackground
-                                    }
-                                ),
-                        )
+                        val cellIndex = row * 7 + col
+                        val dayNumber = cellIndex - leadingBlanks + 1
+                        if (dayNumber < 1 || dayNumber > daysInMonth) {
+                            // empty cell to preserve grid alignment
+                            Spacer(modifier = Modifier.weight(1f).aspectRatio(1f))
+                        } else {
+                            val date = firstOfMonth.withDayOfMonth(dayNumber)
+                            val isFuture = date.isAfter(today)
+                            val isToday = date == today
+                            val isDone = completionDates.contains(date.toString())
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .aspectRatio(1f)
+                                    .clip(CircleShape)
+                                    .background(
+                                        when {
+                                            isFuture -> Color.Transparent
+                                            isDone -> theme.accent
+                                            else -> CardBackground
+                                        }
+                                    ),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Text(
+                                    text = dayNumber.toString(),
+                                    fontSize = 11.sp,
+                                    fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
+                                    color = when {
+                                        isFuture -> TextMuted.copy(alpha = 0.4f)
+                                        isDone -> theme.onAccent
+                                        isToday -> TextPrimary
+                                        else -> TextMuted
+                                    },
+                                )
+                            }
+                        }
                     }
                 }
             }
