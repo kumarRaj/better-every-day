@@ -70,6 +70,7 @@ fun BetterEverydayTheme(
                 surface = CardBackground,
                 onSurface = TextPrimary,
             ),
+            typography = AppTypography,
             content = content,
         )
     }
