@@ -34,16 +34,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bettereveryday.ui.onboarding.components.WheelTimePicker
 import com.bettereveryday.ui.theme.BackgroundWarm
 import com.bettereveryday.ui.theme.CardBackground
 import com.bettereveryday.ui.theme.LocalAppTheme
+import com.bettereveryday.ui.theme.TextMuted
 import com.bettereveryday.ui.theme.TextPrimary
 import com.bettereveryday.ui.theme.accent
+import com.bettereveryday.ui.theme.gradientEnd
+import com.bettereveryday.ui.theme.gradientStart
 import com.bettereveryday.ui.theme.onAccent
 
 private val emojiOptions = listOf(
@@ -110,42 +115,72 @@ fun AddGoalSheet(viewModel: AddGoalViewModel, habitId: Long? = null, onDismiss: 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundWarm)
-            .verticalScroll(rememberScrollState())
-            .padding(bottom = 32.dp),
+            .background(BackgroundWarm),
     ) {
-        Row(
+        // Gradient header — matches HabitDetailScreen pattern
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                .background(
+                    Brush.linearGradient(listOf(theme.gradientStart, theme.gradientEnd)),
+                    RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
+                )
+                .padding(horizontal = 8.dp)
+                .padding(top = 16.dp, bottom = 24.dp),
         ) {
-            TextButton(onClick = onDismiss) {
-                Text(text = "Cancel", color = theme.accent, fontSize = 16.sp)
+            // Cancel / Save row
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TextButton(onClick = onDismiss) {
+                    Text(text = "Cancel", color = theme.onAccent, fontSize = 16.sp)
+                }
+                Spacer(modifier = Modifier.weight(1f))
+                TextButton(
+                    onClick = { viewModel.saveHabit { onDismiss() } },
+                    enabled = isSaveEnabled,
+                ) {
+                    Text(
+                        text = "Save",
+                        color = if (isSaveEnabled) theme.onAccent else theme.onAccent.copy(alpha = 0.4f),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
             }
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = if (isEditMode) "Edit Goal" else "New Goal",
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Bold,
-                color = TextPrimary,
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            TextButton(
-                onClick = { viewModel.saveHabit { onDismiss() } },
-                enabled = isSaveEnabled,
+
+            // Title + subtitle centred below the buttons
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 52.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(
-                    text = "Save",
-                    color = if (isSaveEnabled) theme.accent else theme.accent.copy(alpha = 0.4f),
-                    fontSize = 16.sp,
+                    text = if (isEditMode) "Edit Goal" else "New Goal",
+                    fontSize = 22.sp,
                     fontWeight = FontWeight.Bold,
+                    color = theme.onAccent,
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = if (isEditMode) "Update the details of your habit" else "Define a new habit to track daily",
+                    fontSize = 14.sp,
+                    color = theme.onAccent.copy(alpha = 0.8f),
+                    textAlign = TextAlign.Center,
                 )
             }
         }
 
+        // Scrollable form content
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
+                .padding(top = 20.dp, bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(text = "Habit", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = theme.accent)
