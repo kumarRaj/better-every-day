@@ -26,17 +26,23 @@ import androidx.compose.material.icons.outlined.Cake
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.ContactPage
+import androidx.compose.material.icons.outlined.Feedback
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -184,7 +190,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditProfile: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             Icon(imageVector = Icons.Outlined.Palette, contentDescription = null, tint = theme.accent, modifier = Modifier.size(14.dp))
-            Text(text = "Appearance", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = theme.accent)
+            Text(text = "Theme", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = theme.accent)
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -206,6 +212,53 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditProfile: () -> Unit) {
                     label = themeString.lowercase().replaceFirstChar { it.uppercase() },
                     isSelected = isSelected,
                     onClick = { viewModel.setTheme(themeString) },
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Icon(imageVector = Icons.Outlined.Feedback, contentDescription = null, tint = theme.accent, modifier = Modifier.size(14.dp))
+            Text(text = "Feedback", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = theme.accent)
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = CardBackground),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            var feedbackSubject by remember { mutableStateOf("") }
+            var feedbackBody by remember { mutableStateOf("") }
+            val fieldColors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = theme.accent,
+                unfocusedBorderColor = TextMuted.copy(alpha = 0.3f),
+                focusedLabelColor = theme.accent,
+                unfocusedLabelColor = TextMuted,
+                cursorColor = theme.accent,
+            )
+            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                OutlinedTextField(
+                    value = feedbackSubject,
+                    onValueChange = { feedbackSubject = it },
+                    label = { Text("Subject") },
+                    singleLine = true,
+                    colors = fieldColors,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                OutlinedTextField(
+                    value = feedbackBody,
+                    onValueChange = { feedbackBody = it },
+                    label = { Text("Your feedback") },
+                    minLines = 4,
+                    colors = fieldColors,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         }
