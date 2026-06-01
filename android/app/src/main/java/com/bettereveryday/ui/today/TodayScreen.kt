@@ -45,7 +45,6 @@ import androidx.compose.ui.unit.sp
 import com.bettereveryday.data.local.db.entity.HabitEntity
 import com.bettereveryday.ui.theme.BackgroundWarm
 import com.bettereveryday.ui.theme.CardBackground
-import com.bettereveryday.ui.theme.CheckGreen
 import com.bettereveryday.ui.theme.LocalAppTheme
 import com.bettereveryday.ui.theme.TextMuted
 import com.bettereveryday.ui.theme.TextPrimary
@@ -222,7 +221,7 @@ private fun HabitRow(
 ) {
     val theme = LocalAppTheme.current
     val checkboxColor by animateColorAsState(
-        targetValue = if (isCompleted) CheckGreen else Color.Transparent,
+        targetValue = if (isCompleted) theme.accent else Color.Transparent,
         label = "checkboxColor",
     )
 

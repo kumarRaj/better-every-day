@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.sp
 import com.bettereveryday.data.local.db.entity.HabitEntity
 import com.bettereveryday.ui.theme.BackgroundWarm
 import com.bettereveryday.ui.theme.CardBackground
-import com.bettereveryday.ui.theme.CheckGreen
 import com.bettereveryday.ui.theme.LocalAppTheme
 import com.bettereveryday.ui.theme.TextMuted
 import com.bettereveryday.ui.theme.TextPrimary
@@ -121,7 +120,7 @@ fun GoalsScreen(
                     icon = Icons.Outlined.CheckCircle,
                     value = doneToday.toString(),
                     label = "Done Today",
-                    iconColor = CheckGreen,
+                    iconColor = LocalAppTheme.current.accent,
                 )
             }
 

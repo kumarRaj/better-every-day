@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bettereveryday.ui.theme.BackgroundWarm
 import com.bettereveryday.ui.theme.CardBackground
-import com.bettereveryday.ui.theme.CheckGreen
 import com.bettereveryday.ui.theme.LocalAppTheme
 import com.bettereveryday.ui.theme.TextMuted
 import com.bettereveryday.ui.theme.TextPrimary
