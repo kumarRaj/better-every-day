@@ -14,6 +14,7 @@ import com.bettereveryday.data.local.db.AppDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class HabitReminderReceiver : BroadcastReceiver() {
 
@@ -22,6 +23,28 @@ class HabitReminderReceiver : BroadcastReceiver() {
         val habitTitle = intent.getStringExtra("habit_title") ?: return
         val habitEmoji = intent.getStringExtra("habit_emoji") ?: ""
 
+        if (habitId == -1L) return
+
+        val pendingResult = goAsync()
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val db = AppDatabase.getInstance(context)
+                val today = LocalDate.now().toString()
+                val alreadyDone = db.completionDao().isCompleted(habitId, today)
+                if (!alreadyDone) {
+                    showNotification(context, habitId, habitTitle, habitEmoji)
+                }
+                val habit = db.habitDao().getHabitById(habitId)
+                if (habit != null) {
+                    AlarmManagerScheduler(context).schedule(habit)
+                }
+            } finally {
+                pendingResult.finish()
+            }
+        }
+    }
+
+    private fun showNotification(context: Context, habitId: Long, habitTitle: String, habitEmoji: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "habit_reminders",
@@ -55,19 +78,5 @@ class HabitReminderReceiver : BroadcastReceiver() {
             .build()
 
         NotificationManagerCompat.from(context).notify(habitId.toInt(), notification)
-
-        if (habitId == -1L) return
-
-        val pendingResult = goAsync()
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val habit = AppDatabase.getInstance(context).habitDao().getHabitById(habitId)
-                if (habit != null) {
-                    AlarmManagerScheduler(context).schedule(habit)
-                }
-            } finally {
-                pendingResult.finish()
-            }
-        }
     }
 }
