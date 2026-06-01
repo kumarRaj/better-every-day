@@ -2,7 +2,10 @@ package com.bettereveryday.ui.today
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,8 +21,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -52,7 +57,6 @@ private val dayLabels = listOf("M", "T", "W", "T", "F", "S", "S")
 fun HabitDetailScreen(
     viewModel: HabitDetailViewModel,
     onBack: () -> Unit,
-    onEdit: (Long) -> Unit,
 ) {
     val theme = LocalAppTheme.current
     val habit by viewModel.habit.collectAsState()
@@ -77,25 +81,15 @@ fun HabitDetailScreen(
                 )
                 .padding(20.dp),
         ) {
-            Text(
-                text = "<",
-                fontSize = 22.sp,
-                color = theme.onAccent,
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .clickable { onBack() }
-                    .padding(4.dp),
-            )
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .size(36.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .clickable { habit?.id?.let { onEdit(it) } },
-                contentAlignment = Alignment.Center,
+            IconButton(
+                onClick = onBack,
+                modifier = Modifier.align(Alignment.TopStart),
             ) {
-                Text(text = "✏️", fontSize = 16.sp)
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = theme.onAccent,
+                )
             }
             Column(
                 modifier = Modifier
@@ -164,44 +158,47 @@ fun HabitDetailScreen(
         val totalCells = leadingBlanks + daysInMonth
         val rows = (totalCells + 6) / 7
 
-        Column(
+        var swipeDragTotal by remember { mutableStateOf(0f) }
+        var isSwiping by remember { mutableStateOf(false) }
+        val isCurrentMonth = displayMonth.year == today.year && displayMonth.month == today.month
+
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .pointerInput(displayMonth) {
+                    detectHorizontalDragGestures(
+                        onDragStart = { swipeDragTotal = 0f; isSwiping = true },
+                        onHorizontalDrag = { _, dragAmount -> swipeDragTotal += dragAmount },
+                        onDragEnd = {
+                            if (swipeDragTotal < -40f && !isCurrentMonth) {
+                                displayMonth = displayMonth.plusMonths(1)
+                            } else if (swipeDragTotal > 40f) {
+                                displayMonth = displayMonth.minusMonths(1)
+                            }
+                            swipeDragTotal = 0f
+                            isSwiping = false
+                        },
+                        onDragCancel = { swipeDragTotal = 0f; isSwiping = false },
+                    )
+                },
+        ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            // Month + year header with prev/next arrows
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = "<",
-                    fontSize = 18.sp,
-                    color = TextPrimary,
-                    modifier = Modifier
-                        .clickable { displayMonth = displayMonth.minusMonths(1) }
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                )
-                Text(
-                    text = displayMonth.month.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault()) +
-                        " ${displayMonth.year}",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary,
-                    modifier = Modifier.weight(1f),
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                )
-                val isCurrentMonth = displayMonth.year == today.year && displayMonth.month == today.month
-                Text(
-                    text = ">",
-                    fontSize = 18.sp,
-                    color = if (isCurrentMonth) TextMuted.copy(alpha = 0.3f) else TextPrimary,
-                    modifier = Modifier
-                        .then(if (!isCurrentMonth) Modifier.clickable { displayMonth = displayMonth.plusMonths(1) } else Modifier)
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                )
-            }
+            // Month + year header
+            Text(
+                text = displayMonth.month.getDisplayName(java.time.format.TextStyle.FULL, java.util.Locale.getDefault()) +
+                    " ${displayMonth.year}",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = TextPrimary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            )
             // Day-of-week headers
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -263,7 +260,26 @@ fun HabitDetailScreen(
                     }
                 }
             }
+        } // end Column
+
+        // Translucent swipe-hint arrow, visible only while dragging, in swipe direction only
+        if (isSwiping && swipeDragTotal > 10f) {
+            Text(
+                text = "‹",
+                fontSize = 36.sp,
+                color = TextPrimary.copy(alpha = 0.35f),
+                modifier = Modifier.align(Alignment.CenterStart),
+            )
         }
+        if (isSwiping && swipeDragTotal < -10f && !isCurrentMonth) {
+            Text(
+                text = "›",
+                fontSize = 36.sp,
+                color = TextPrimary.copy(alpha = 0.35f),
+                modifier = Modifier.align(Alignment.CenterEnd),
+            )
+        }
+        } // end Box
 
         Spacer(modifier = Modifier.height(32.dp))
     }
