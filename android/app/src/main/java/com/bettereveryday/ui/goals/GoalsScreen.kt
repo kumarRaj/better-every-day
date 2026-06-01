@@ -254,30 +254,6 @@ private fun GoalRow(
                         modifier = Modifier.size(18.dp),
                     )
                 }
-
-                if (isCompletedToday) {
-                    Box(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clip(CircleShape)
-                            .background(CheckGreen),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Check,
-                            contentDescription = "Done",
-                            tint = Color.White,
-                            modifier = Modifier.size(16.dp),
-                        )
-                    }
-                } else {
-                    Icon(
-                        imageVector = Icons.Outlined.NotificationsNone,
-                        contentDescription = "Reminder",
-                        tint = theme.accent,
-                        modifier = Modifier.size(20.dp),
-                    )
-                }
             }
         }
     }
