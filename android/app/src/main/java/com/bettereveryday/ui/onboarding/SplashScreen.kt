@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bettereveryday.ui.theme.BackgroundWarm
+import androidx.compose.material3.MaterialTheme
 import com.bettereveryday.ui.theme.LocalAppTheme
 import com.bettereveryday.ui.theme.accent
 import kotlinx.coroutines.delay
@@ -29,7 +29,7 @@ fun SplashScreen(onNavigationReady: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundWarm),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

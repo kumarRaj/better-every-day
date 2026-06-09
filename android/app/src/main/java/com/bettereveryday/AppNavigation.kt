@@ -45,12 +45,12 @@ fun AppNavigation(
 ) {
     val prefs by prefsRepository.userPreferences.collectAsState(initial = null)
     val activeTheme = when (prefs?.selectedTheme) {
-        "OCEAN" -> AppTheme.Ocean
+        "SUNRISE" -> AppTheme.Sunrise
         "FOREST" -> AppTheme.Forest
         "LAVENDER" -> AppTheme.Lavender
         "MIDNIGHT" -> AppTheme.Midnight
         "ROSE" -> AppTheme.Rose
-        else -> AppTheme.Sunrise
+        else -> AppTheme.Ocean
     }
 
     BetterEverydayTheme(theme = activeTheme) {
