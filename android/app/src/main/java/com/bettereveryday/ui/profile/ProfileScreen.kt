@@ -64,8 +64,8 @@ import com.bettereveryday.ui.theme.gradientStart
 import com.bettereveryday.ui.theme.onAccent
 
 private val themeEntries = listOf(
-    Triple("SUNRISE", AppTheme.Sunrise, "🌅"),
     Triple("OCEAN", AppTheme.Ocean, "🌊"),
+    Triple("SUNRISE", AppTheme.Sunrise, "🌅"),
     Triple("FOREST", AppTheme.Forest, "🌿"),
     Triple("LAVENDER", AppTheme.Lavender, "💜"),
     Triple("MIDNIGHT", AppTheme.Midnight, "🌙"),
