@@ -2,13 +2,18 @@ package com.bettereveryday.ui.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bettereveryday.data.local.db.dao.HabitDao
 import com.bettereveryday.data.prefs.UserPreferencesRepository
+import com.bettereveryday.data.seeding.seedHabits
+import com.bettereveryday.notifications.AlarmScheduler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class OnboardingViewModel(
-    private val prefsRepository: UserPreferencesRepository
+    private val prefsRepository: UserPreferencesRepository,
+    private val habitDao: HabitDao,
+    private val alarmScheduler: AlarmScheduler,
 ) : ViewModel() {
 
     private val _userName = MutableStateFlow("")
@@ -86,6 +91,18 @@ class OnboardingViewModel(
     }
 
     fun completeOnboarding() {
-        viewModelScope.launch { prefsRepository.setOnboardingComplete() }
+        viewModelScope.launch {
+            seedHabits(
+                focusAreas = _focusAreas.value,
+                habitQuantity = _habitQuantity.value,
+                wakeHour = _wakeHour.value,
+                wakeMinute = _wakeMinute.value,
+                windDownHour = _windDownHour.value,
+                windDownMinute = _windDownMinute.value,
+                habitDao = habitDao,
+                alarmScheduler = alarmScheduler,
+            )
+            prefsRepository.setOnboardingComplete()
+        }
     }
 }

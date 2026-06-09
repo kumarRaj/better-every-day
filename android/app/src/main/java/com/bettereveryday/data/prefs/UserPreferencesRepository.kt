@@ -43,7 +43,7 @@ class UserPreferencesRepository(private val context: Context) {
             wakeMinute = prefs[Keys.WAKE_MINUTE] ?: 0,
             windDownHour = prefs[Keys.WIND_DOWN_HOUR] ?: 22,
             windDownMinute = prefs[Keys.WIND_DOWN_MINUTE] ?: 0,
-            selectedTheme = prefs[Keys.SELECTED_THEME] ?: "SUNRISE",
+            selectedTheme = prefs[Keys.SELECTED_THEME] ?: "OCEAN",
             focusAreas = prefs[Keys.FOCUS_AREAS]
                 ?.split(",")
                 ?.filter { it.isNotEmpty() }

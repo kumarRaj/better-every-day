@@ -53,7 +53,7 @@ val AppTheme.gradientEnd: Color
 val AppTheme.onAccent: Color
     get() = Color.White
 
-val LocalAppTheme = staticCompositionLocalOf { AppTheme.Sunrise }
+val LocalAppTheme = staticCompositionLocalOf { AppTheme.Ocean }
 
 @Composable
 fun BetterEverydayTheme(

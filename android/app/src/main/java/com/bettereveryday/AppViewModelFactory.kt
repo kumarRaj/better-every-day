@@ -25,7 +25,7 @@ class AppViewModelFactory(
         modelClass.isAssignableFrom(MainViewModel::class.java) ->
             MainViewModel(prefsRepository) as T
         modelClass.isAssignableFrom(OnboardingViewModel::class.java) ->
-            OnboardingViewModel(prefsRepository) as T
+            OnboardingViewModel(prefsRepository, db.habitDao(), AlarmManagerScheduler(context)) as T
         modelClass.isAssignableFrom(TodayViewModel::class.java) ->
             TodayViewModel(db.habitDao(), db.completionDao(), prefsRepository) as T
         modelClass.isAssignableFrom(GoalsViewModel::class.java) ->
