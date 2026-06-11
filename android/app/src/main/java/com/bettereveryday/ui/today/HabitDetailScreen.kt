@@ -2,6 +2,7 @@ package com.bettereveryday.ui.today
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -240,6 +241,10 @@ fun HabitDetailScreen(
                                             isDone -> theme.accent
                                             else -> CardBackground
                                         }
+                                    )
+                                    .then(
+                                        if (!isFuture) Modifier.clickable { viewModel.toggleDate(date) }
+                                        else Modifier
                                     ),
                                 contentAlignment = Alignment.Center,
                             ) {

@@ -71,6 +71,24 @@ class HabitDetailViewModel(
         }
     }
 
+    fun toggleDate(date: LocalDate) {
+        val dateStr = date.toString()
+        viewModelScope.launch {
+            if (completionDao.isCompleted(habitId, dateStr)) {
+                completionDao.deleteCompletion(habitId, dateStr)
+            } else {
+                completionDao.insertCompletion(
+                    CompletionEntity(
+                        id = 0,
+                        habitId = habitId,
+                        completedDate = dateStr,
+                        completedAt = System.currentTimeMillis(),
+                    )
+                )
+            }
+        }
+    }
+
     private fun computeCurrentStreak(dates: Set<LocalDate>): Int {
         var streak = 0
         var date = LocalDate.now()
