@@ -11,8 +11,12 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.bettereveryday.MainActivity
 import com.bettereveryday.data.local.db.AppDatabase
+import com.bettereveryday.data.prefs.UserPreferencesRepository
+import com.bettereveryday.ui.theme.AppTheme
+import com.bettereveryday.ui.theme.accent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -32,7 +36,12 @@ class HabitReminderReceiver : BroadcastReceiver() {
                 val today = LocalDate.now().toString()
                 val alreadyDone = db.completionDao().isCompleted(habitId, today)
                 if (!alreadyDone) {
-                    showNotification(context, habitId, habitTitle, habitEmoji)
+                    val prefs = UserPreferencesRepository(context).userPreferences.first()
+                    val appTheme = AppTheme.entries.firstOrNull {
+                        it.name.uppercase() == prefs.selectedTheme
+                    } ?: AppTheme.Ocean
+                    val accentColor = appTheme.accent.toArgb()
+                    showNotification(context, habitId, habitTitle, habitEmoji, accentColor)
                 }
                 val habit = db.habitDao().getHabitById(habitId)
                 if (habit != null) {
@@ -44,7 +53,7 @@ class HabitReminderReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun showNotification(context: Context, habitId: Long, habitTitle: String, habitEmoji: String) {
+    private fun showNotification(context: Context, habitId: Long, habitTitle: String, habitEmoji: String, accentColor: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 "habit_reminders",
@@ -75,6 +84,8 @@ class HabitReminderReceiver : BroadcastReceiver() {
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setColor(accentColor)
+            .setColorized(true)
             .build()
 
         NotificationManagerCompat.from(context).notify(habitId.toInt(), notification)
