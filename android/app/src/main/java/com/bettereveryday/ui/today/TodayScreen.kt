@@ -154,11 +154,10 @@ fun TodayScreen(viewModel: TodayViewModel, onHabitClick: (Long) -> Unit) {
                 ) {
                     Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
-                            text = "NEXT UP",
+                            text = "Next Up",
                             fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.SemiBold,
                             color = theme.accent,
-                            letterSpacing = 1.sp,
                         )
                         Box(
                             modifier = Modifier

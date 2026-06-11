@@ -140,7 +140,7 @@ fun MainShell(
                                 text = label,
                                 fontSize = 12.sp,
                                 color = contentColor,
-                                fontWeight = if (isActive) FontWeight.Medium else FontWeight.Normal,
+                                fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
                                 maxLines = 1,
                                 softWrap = false,
                             )
