@@ -15,6 +15,10 @@ private val Context.dataStore by preferencesDataStore(name = "user_prefs")
 
 class UserPreferencesRepository(private val context: Context) {
 
+    companion object {
+        const val DEFAULT_THEME = "FOREST"
+    }
+
     private object Keys {
         val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
         val USER_NAME = stringPreferencesKey("user_name")
@@ -43,7 +47,7 @@ class UserPreferencesRepository(private val context: Context) {
             wakeMinute = prefs[Keys.WAKE_MINUTE] ?: 0,
             windDownHour = prefs[Keys.WIND_DOWN_HOUR] ?: 22,
             windDownMinute = prefs[Keys.WIND_DOWN_MINUTE] ?: 0,
-            selectedTheme = prefs[Keys.SELECTED_THEME] ?: "OCEAN",
+            selectedTheme = prefs[Keys.SELECTED_THEME] ?: DEFAULT_THEME,
             focusAreas = prefs[Keys.FOCUS_AREAS]
                 ?.split(",")
                 ?.filter { it.isNotEmpty() }

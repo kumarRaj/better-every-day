@@ -40,7 +40,7 @@ class OnboardingViewModel(
     private val _windDownMinute = MutableStateFlow(0)
     val windDownMinute: StateFlow<Int> = _windDownMinute
 
-    private val _selectedTheme = MutableStateFlow("SUNRISE")
+    private val _selectedTheme = MutableStateFlow(UserPreferencesRepository.DEFAULT_THEME)
     val selectedTheme: StateFlow<String> = _selectedTheme
 
     private val _notificationsGranted = MutableStateFlow(false)

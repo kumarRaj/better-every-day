@@ -6,6 +6,11 @@
 *.mp4
 screenshots/
 
+# Signing credentials
+android/keystore.properties
+android/app/*.jks
+android/app/*.keystore
+
 # Android build outputs
 android/build/
 android/app/build/

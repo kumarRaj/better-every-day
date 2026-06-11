@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.TextStyle
+import java.time.temporal.TemporalAdjusters
 import java.util.Locale
 
 data class DayBar(
@@ -57,7 +58,7 @@ class InsightsViewModel(
     val bestStreak: StateFlow<Int> = _bestStreak
 
     init {
-        val startOfWeek = today.with(DayOfWeek.SUNDAY)
+        val startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
         val startStr = startOfWeek.toString()
 
         viewModelScope.launch {

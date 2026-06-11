@@ -9,7 +9,7 @@ data class UserPreferences(
     val wakeMinute: Int = 0,
     val windDownHour: Int = 22,
     val windDownMinute: Int = 0,
-    val selectedTheme: String = "SUNRISE",
+    val selectedTheme: String = UserPreferencesRepository.DEFAULT_THEME,
     val focusAreas: Set<String> = emptySet(),
     val birthdateEnabled: Boolean = false,
     val birthdateDay: Int = 1,
