@@ -226,12 +226,14 @@ private fun GoalRow(
                     fontSize = 13.sp,
                     color = TextMuted,
                 )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = "🔥 ${streak} day streak",
-                    fontSize = 13.sp,
-                    color = theme.accent,
-                )
+                if (streak > 0) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "${streak} day streak",
+                        fontSize = 13.sp,
+                        color = theme.accent,
+                    )
+                }
             }
 
             Column(

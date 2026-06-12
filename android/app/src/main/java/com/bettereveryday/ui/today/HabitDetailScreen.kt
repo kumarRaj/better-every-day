@@ -132,7 +132,7 @@ fun HabitDetailScreen(
                 .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            StatCard(emoji = "🔥", value = "${currentStreak}d", label = "Current Streak", modifier = Modifier.weight(1f))
+            StatCard(emoji = "", value = "${currentStreak}d", label = "Current Streak", modifier = Modifier.weight(1f))
             StatCard(emoji = "🏆", value = "${longestStreak}d", label = "Best Streak", modifier = Modifier.weight(1f))
             StatCard(emoji = "✓", value = "$totalCompletions", label = "Total Done", modifier = Modifier.weight(1f))
         }
@@ -299,8 +299,10 @@ private fun StatCard(emoji: String, value: String, label: String, modifier: Modi
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(text = emoji, fontSize = 18.sp)
-        Spacer(modifier = Modifier.height(4.dp))
+        if (emoji.isNotEmpty()) {
+            Text(text = emoji, fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(4.dp))
+        }
         Text(text = value, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
         Text(text = label, fontSize = 11.sp, color = TextMuted, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
     }

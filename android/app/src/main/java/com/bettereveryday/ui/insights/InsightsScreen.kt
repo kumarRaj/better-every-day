@@ -160,12 +160,14 @@ fun InsightsScreen(viewModel: InsightsViewModel) {
                                 trackColor = theme.accentLight,
                             )
                         }
-                        Text(
-                            text = "🔥 ${leader.streak}d",
-                            fontSize = 13.sp,
-                            color = theme.accent,
-                            modifier = Modifier.padding(top = 4.dp),
-                        )
+                        if (leader.streak > 0) {
+                            Text(
+                                text = "${leader.streak}d",
+                                fontSize = 13.sp,
+                                color = theme.accent,
+                                modifier = Modifier.padding(top = 4.dp),
+                            )
+                        }
                     }
                 }
             }

@@ -264,13 +264,13 @@ private fun HabitRow(
                     },
                 )
                 Spacer(modifier = Modifier.height(2.dp))
-                if (isCompleted) {
+                if (isCompleted && streak > 0) {
                     Text(
-                        text = "🔥 ${streak}d streak",
+                        text = "${streak}d streak",
                         fontSize = 13.sp,
                         color = TextMuted,
                     )
-                } else {
+                } else if (!isCompleted) {
                     Text(
                         text = "🕒 %02d:%02d · ${habit.scheduleType.lowercase().replaceFirstChar { it.uppercase() }} 🔔".format(
                             habit.reminderHour,
