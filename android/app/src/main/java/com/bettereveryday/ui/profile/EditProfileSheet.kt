@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -232,6 +234,8 @@ private fun WheelDatePicker(
     val months = monthNames
     val years = (1940..2010).toList()
 
+    val paddingItems = WHEEL_VISIBLE_ITEMS / 2
+
     val dayState = rememberLazyListState(initialFirstVisibleItemIndex = (day - 1).coerceIn(0, 30))
     val monthState = rememberLazyListState(initialFirstVisibleItemIndex = (month - 1).coerceIn(0, 11))
     val yearState = rememberLazyListState(initialFirstVisibleItemIndex = (year - 1940).coerceIn(0, years.size - 1))
@@ -245,7 +249,8 @@ private fun WheelDatePicker(
             .distinctUntilChanged()
             .collect { scrolling ->
                 if (!scrolling) {
-                    selectedDay = days.getOrElse(dayState.firstVisibleItemIndex) { day }
+                    val idx = (dayState.firstVisibleItemIndex).coerceIn(0, days.lastIndex)
+                    selectedDay = days[idx]
                     onDateChanged(selectedDay, selectedMonth, selectedYear)
                 }
             }
@@ -256,7 +261,8 @@ private fun WheelDatePicker(
             .distinctUntilChanged()
             .collect { scrolling ->
                 if (!scrolling) {
-                    selectedMonth = monthState.firstVisibleItemIndex + 1
+                    val idx = (monthState.firstVisibleItemIndex).coerceIn(0, months.lastIndex)
+                    selectedMonth = idx + 1
                     onDateChanged(selectedDay, selectedMonth, selectedYear)
                 }
             }
@@ -267,7 +273,8 @@ private fun WheelDatePicker(
             .distinctUntilChanged()
             .collect { scrolling ->
                 if (!scrolling) {
-                    selectedYear = years.getOrElse(yearState.firstVisibleItemIndex) { year }
+                    val idx = (yearState.firstVisibleItemIndex).coerceIn(0, years.lastIndex)
+                    selectedYear = years[idx]
                     onDateChanged(selectedDay, selectedMonth, selectedYear)
                 }
             }
@@ -282,18 +289,21 @@ private fun WheelDatePicker(
             items = days.map { it.toString() },
             state = dayState,
             highlightColor = theme.accent,
+            paddingItems = paddingItems,
             modifier = Modifier.width(56.dp),
         )
         WheelColumn(
             items = months,
             state = monthState,
             highlightColor = theme.accent,
+            paddingItems = paddingItems,
             modifier = Modifier.width(120.dp),
         )
         WheelColumn(
             items = years.map { it.toString() },
             state = yearState,
             highlightColor = theme.accent,
+            paddingItems = paddingItems,
             modifier = Modifier.width(72.dp),
         )
     }
@@ -304,8 +314,11 @@ private fun WheelColumn(
     items: List<String>,
     state: androidx.compose.foundation.lazy.LazyListState,
     highlightColor: Color,
+    paddingItems: Int,
     modifier: Modifier = Modifier,
 ) {
+    val snapBehavior = rememberSnapFlingBehavior(lazyListState = state)
+    val contentPadding = PaddingValues(vertical = WHEEL_ITEM_HEIGHT * paddingItems)
     Box(contentAlignment = Alignment.Center) {
         Box(
             modifier = modifier
@@ -317,11 +330,13 @@ private fun WheelColumn(
         )
         LazyColumn(
             state = state,
+            flingBehavior = snapBehavior,
+            contentPadding = contentPadding,
             modifier = modifier.height(WHEEL_ITEM_HEIGHT * WHEEL_VISIBLE_ITEMS),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             items(items.size) { index ->
-                val distance = kotlin.math.abs(index - state.firstVisibleItemIndex - (WHEEL_VISIBLE_ITEMS / 2))
+                val distance = kotlin.math.abs(index - state.firstVisibleItemIndex)
                 val alpha = when (distance) {
                     0 -> 1f
                     1 -> 0.6f

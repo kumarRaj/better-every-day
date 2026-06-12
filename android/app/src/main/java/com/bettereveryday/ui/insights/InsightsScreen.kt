@@ -131,7 +131,7 @@ fun InsightsScreen(viewModel: InsightsViewModel) {
                 }
                 streakLeaders.forEach { leader ->
                     Row(
-                        verticalAlignment = Alignment.Top,
+                        verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         modifier = Modifier.fillMaxWidth(),
                     ) {
@@ -165,7 +165,6 @@ fun InsightsScreen(viewModel: InsightsViewModel) {
                                 text = "${leader.streak}d",
                                 fontSize = 13.sp,
                                 color = theme.accent,
-                                modifier = Modifier.padding(top = 4.dp),
                             )
                         }
                     }

@@ -1,5 +1,7 @@
 package com.bettereveryday.ui.profile
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -29,6 +32,8 @@ import androidx.compose.material.icons.outlined.ContactPage
 import androidx.compose.material.icons.outlined.Feedback
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -44,6 +49,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
@@ -72,16 +78,18 @@ private val themeEntries = listOf(
     Triple("ROSE", AppTheme.Rose, "🌸"),
 )
 
+private const val FEEDBACK_PHONE = "919204712125"
+
 @Composable
 fun ProfileScreen(viewModel: ProfileViewModel, onEditProfile: () -> Unit) {
     val theme = LocalAppTheme.current
+    val context = LocalContext.current
     val userName by viewModel.userName.collectAsState()
     val selectedTheme by viewModel.selectedTheme.collectAsState()
     val birthdateEnabled by viewModel.birthdateEnabled.collectAsState()
     val birthdateDay by viewModel.birthdateDay.collectAsState()
     val birthdateMonth by viewModel.birthdateMonth.collectAsState()
     val birthdateYear by viewModel.birthdateYear.collectAsState()
-
     LaunchedEffect(Unit) {
         viewModel.editProfileEvent.collect { onEditProfile() }
     }
@@ -91,6 +99,7 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditProfile: () -> Unit) {
             .fillMaxSize()
             .background(BackgroundWarm)
             .verticalScroll(rememberScrollState())
+            .imePadding()
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -234,8 +243,9 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditProfile: () -> Unit) {
             colors = CardDefaults.cardColors(containerColor = CardBackground),
             modifier = Modifier.fillMaxWidth(),
         ) {
-            var feedbackSubject by remember { mutableStateOf("") }
+            var feedbackSubject by remember { mutableStateOf("Improvement ideas") }
             var feedbackBody by remember { mutableStateOf("") }
+
             val fieldColors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = theme.accent,
                 unfocusedBorderColor = TextMuted.copy(alpha = 0.3f),
@@ -260,6 +270,22 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditProfile: () -> Unit) {
                     colors = fieldColors,
                     modifier = Modifier.fillMaxWidth(),
                 )
+                Button(
+                    onClick = {
+                        val message = "*${feedbackSubject}*\n\n$feedbackBody"
+                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                            data = Uri.parse("https://wa.me/$FEEDBACK_PHONE?text=${Uri.encode(message)}")
+                        }
+                        context.startActivity(intent)
+                        feedbackBody = ""
+                        feedbackSubject = "Improvement ideas"
+                    },
+                    enabled = feedbackBody.isNotBlank(),
+                    colors = ButtonDefaults.buttonColors(containerColor = theme.accent),
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text("Submit feedback", color = theme.onAccent)
+                }
             }
         }
 
@@ -299,7 +325,7 @@ private fun ThemeCard(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
-                    Text(text = emoji, fontSize = 16.sp)
+                    Text(text = emoji, fontSize = 20.sp)
                     Text(text = label, fontSize = 13.sp, color = Color.White, fontWeight = FontWeight.Medium)
                 }
             }

@@ -10,6 +10,8 @@ screenshots/
 android/keystore.properties
 android/app/*.jks
 android/app/*.keystore
+android/*.jks
+android/*.keystore
 
 # Android build outputs
 android/build/

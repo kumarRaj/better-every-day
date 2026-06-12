@@ -73,7 +73,6 @@ fun MainShell(
     db: AppDatabase,
     factory: AppViewModelFactory,
     openHomeRequestId: Int = 0,
-    onHabitClick: (Long) -> Unit = {},
     onAddGoal: () -> Unit = {},
     onEditHabit: (Long) -> Unit = {},
     onEditProfile: () -> Unit = {},
@@ -151,10 +150,7 @@ fun MainShell(
         ) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding)) {
                 when (selectedTab) {
-                    MainTab.Today -> TodayScreen(
-                        viewModel = todayViewModel,
-                        onHabitClick = onHabitClick,
-                    )
+                    MainTab.Today -> TodayScreen(viewModel = todayViewModel)
                     MainTab.Goals -> GoalsScreen(
                         viewModel = goalsViewModel,
                         onAddGoal = onAddGoal,

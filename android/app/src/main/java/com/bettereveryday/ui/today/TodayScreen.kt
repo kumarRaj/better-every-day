@@ -58,7 +58,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun TodayScreen(viewModel: TodayViewModel, onHabitClick: (Long) -> Unit) {
+fun TodayScreen(viewModel: TodayViewModel) {
     val theme = LocalAppTheme.current
     val userName by viewModel.userName.collectAsState()
     val todayHabits by viewModel.todayHabits.collectAsState()
@@ -203,8 +203,7 @@ fun TodayScreen(viewModel: TodayViewModel, onHabitClick: (Long) -> Unit) {
                 habit = habit,
                 isCompleted = habit.id in completedIds,
                 streak = streaks[habit.id] ?: 0,
-                onRowClick = { onHabitClick(habit.id) },
-                onCheckboxClick = { viewModel.toggleCompletion(habit.id) },
+                onToggle = { viewModel.toggleCompletion(habit.id) },
             )
         }
     }
@@ -215,8 +214,7 @@ private fun HabitRow(
     habit: HabitEntity,
     isCompleted: Boolean,
     streak: Int,
-    onRowClick: () -> Unit,
-    onCheckboxClick: () -> Unit,
+    onToggle: () -> Unit,
 ) {
     val theme = LocalAppTheme.current
     val checkboxColor by animateColorAsState(
@@ -229,7 +227,7 @@ private fun HabitRow(
         colors = CardDefaults.cardColors(containerColor = CardBackground),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onRowClick),
+            .clickable(onClick = onToggle),
     ) {
         Row(
             modifier = Modifier
@@ -290,8 +288,7 @@ private fun HabitRow(
                     .then(
                         if (!isCompleted) Modifier.border(1.5.dp, TextMuted, CircleShape)
                         else Modifier
-                    )
-                    .clickable(onClick = onCheckboxClick),
+                    ),
                 contentAlignment = Alignment.Center,
             ) {
                 if (isCompleted) {
