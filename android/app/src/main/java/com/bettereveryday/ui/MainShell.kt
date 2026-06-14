@@ -96,6 +96,7 @@ fun MainShell(
         val profileViewModel: ProfileViewModel = viewModel(factory = factory)
 
         Scaffold(
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
             bottomBar = {
                 Row(
                     modifier = Modifier
