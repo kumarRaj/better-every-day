@@ -50,10 +50,10 @@ fun WheelTimePicker(
     val pickerPadding = PaddingValues(vertical = ITEM_HEIGHT * (VISIBLE_ITEMS / 2))
 
     val hourState = rememberLazyListState(
-        initialFirstVisibleItemIndex = hourIndex
+        initialFirstVisibleItemIndex = maxOf(0, hourIndex - VISIBLE_ITEMS / 2)
     )
     val minuteState = rememberLazyListState(
-        initialFirstVisibleItemIndex = minuteIndex
+        initialFirstVisibleItemIndex = maxOf(0, minuteIndex - VISIBLE_ITEMS / 2)
     )
 
     var selectedHour by remember { mutableStateOf(hourIndex) }
