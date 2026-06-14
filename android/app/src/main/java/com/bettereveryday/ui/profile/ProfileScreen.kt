@@ -3,7 +3,6 @@ package com.bettereveryday.ui.profile
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,7 +25,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Cake
-import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.ContactPage
 import androidx.compose.material.icons.outlined.Feedback
@@ -41,6 +39,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import com.bettereveryday.ui.components.ThemeCard
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -214,12 +213,11 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditProfile: () -> Unit) {
         ) {
             items(themeEntries.size) { index ->
                 val (themeString, appTheme, emoji) = themeEntries[index]
-                val isSelected = selectedTheme == themeString
                 ThemeCard(
                     appTheme = appTheme,
                     emoji = emoji,
                     label = themeString.lowercase().replaceFirstChar { it.uppercase() },
-                    isSelected = isSelected,
+                    isSelected = selectedTheme == themeString,
                     onClick = { viewModel.setTheme(themeString) },
                 )
             }
@@ -293,58 +291,6 @@ fun ProfileScreen(viewModel: ProfileViewModel, onEditProfile: () -> Unit) {
     }
 }
 
-@Composable
-private fun ThemeCard(
-    appTheme: AppTheme,
-    emoji: String,
-    label: String,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-) {
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .then(
-                if (isSelected) Modifier.border(2.dp, appTheme.accent, RoundedCornerShape(12.dp))
-                else Modifier
-            )
-            .clickable(onClick = onClick),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Brush.linearGradient(listOf(appTheme.gradientStart, appTheme.gradientEnd)))
-        ) {
-            Column {
-                Spacer(modifier = Modifier.height(40.dp))
-                Row(
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    Text(text = emoji, fontSize = 20.sp)
-                    Text(text = label, fontSize = 13.sp, color = Color.White, fontWeight = FontWeight.Medium)
-                }
-            }
-            if (isSelected) {
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(6.dp)
-                        .size(22.dp)
-                        .clip(CircleShape)
-                        .background(Color.White),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(imageVector = Icons.Outlined.Check, contentDescription = "Selected", tint = appTheme.accent, modifier = Modifier.size(16.dp))
-                }
-            }
-        }
-    }
-}
 
 private fun monthName(month: Int): String = when (month) {
     1 -> "January"
