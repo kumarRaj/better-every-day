@@ -50,6 +50,7 @@ fun NotificationsPermissionScreen(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         viewModel.setNotificationsGranted(isGranted)
+        onContinue()
     }
 
     OnboardingScaffold(
