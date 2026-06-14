@@ -39,12 +39,13 @@ fun ThemeCard(
     label: String,
     isSelected: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Card(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        modifier = Modifier
+        modifier = modifier
             .aspectRatio(1f)
             .then(
                 if (isSelected) Modifier.border(2.dp, appTheme.accent, RoundedCornerShape(12.dp))

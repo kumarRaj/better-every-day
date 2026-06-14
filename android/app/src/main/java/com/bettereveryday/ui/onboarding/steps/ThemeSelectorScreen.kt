@@ -2,12 +2,10 @@ package com.bettereveryday.ui.onboarding.steps
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -69,20 +67,23 @@ fun ThemeSelectorScreen(
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(24.dp))
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                items(themeOptions) { option ->
-                    ThemeCard(
-                        appTheme = option.appTheme,
-                        emoji = option.emoji,
-                        label = option.label,
-                        isSelected = option.value == selectedTheme,
-                        onClick = { viewModel.setTheme(option.value) },
-                    )
+            themeOptions.chunked(3).forEach { row ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    row.forEach { option ->
+                        ThemeCard(
+                            appTheme = option.appTheme,
+                            emoji = option.emoji,
+                            label = option.label,
+                            isSelected = option.value == selectedTheme,
+                            onClick = { viewModel.setTheme(option.value) },
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
                 }
+                Spacer(modifier = Modifier.height(12.dp))
             }
         }
     }
