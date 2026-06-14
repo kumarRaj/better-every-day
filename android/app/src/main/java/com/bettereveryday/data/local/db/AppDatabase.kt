@@ -13,7 +13,7 @@ import com.bettereveryday.data.local.db.entity.HabitEntity
 
 @Database(
     entities = [HabitEntity::class, CompletionEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -32,13 +32,21 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        // The feedback table was created in 1→2 but never added as a Room entity,
+        // causing a hash mismatch. 2→3 drops that orphan table to realign the schema.
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DROP TABLE IF EXISTS feedback")
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase =
             instance ?: synchronized(this) {
                 instance ?: Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     "better_everyday.db",
-                ).addMigrations(MIGRATION_1_2).build().also { instance = it }
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build().also { instance = it }
             }
     }
 }
