@@ -20,7 +20,6 @@ import com.bettereveryday.ui.goals.AddGoalSheet
 import com.bettereveryday.ui.goals.AddGoalViewModel
 import com.bettereveryday.ui.onboarding.OnboardingViewModel
 import com.bettereveryday.ui.onboarding.OnboardingSummaryScreen
-import com.bettereveryday.ui.onboarding.SplashScreen
 import com.bettereveryday.ui.onboarding.WelcomeScreen
 import com.bettereveryday.ui.onboarding.steps.ConsistencyLevelScreen
 import com.bettereveryday.ui.onboarding.steps.FocusSelectionScreen
@@ -83,16 +82,10 @@ fun AppNavigation(
             )
         }
 
-        NavHost(navController = navController, startDestination = "splash") {
-            composable("splash") {
-                SplashScreen(onNavigationReady = {
-                    val onboardingComplete = prefs?.onboardingComplete ?: false
-                    val dest = if (onboardingComplete) "main" else "welcome"
-                    navController.navigate(dest) {
-                        popUpTo("splash") { inclusive = true }
-                    }
-                })
-            }
+        val resolvedPrefs = prefs ?: return@BetterEverydayTheme
+        val startDestination = if (resolvedPrefs.onboardingComplete) "main" else "welcome"
+
+        NavHost(navController = navController, startDestination = startDestination) {
             composable("welcome") {
                 WelcomeScreen(onGetStarted = { navController.navigate("onboarding/1") })
             }
@@ -161,7 +154,7 @@ fun AppNavigation(
                     viewModel = onboardingViewModel,
                     onStartJourney = {
                         navController.navigate("main") {
-                            popUpTo("splash") { inclusive = true }
+                            popUpTo("welcome") { inclusive = true }
                         }
                     },
                 )

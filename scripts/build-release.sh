@@ -2,8 +2,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ANDROID_DIR="$SCRIPT_DIR/android"
-OUTPUT_DIR="$SCRIPT_DIR/releases"
+ANDROID_DIR="$SCRIPT_DIR/../android"
+OUTPUT_DIR="$SCRIPT_DIR/../releases"
 
 BUILD_GRADLE="$ANDROID_DIR/app/build.gradle.kts"
 
