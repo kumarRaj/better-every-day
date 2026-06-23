@@ -10,6 +10,7 @@ import android.os.Build
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.bettereveryday.R
 import com.bettereveryday.MainActivity
 import com.bettereveryday.data.local.db.AppDatabase
 import com.bettereveryday.data.prefs.UserPreferencesRepository
@@ -78,8 +79,7 @@ class HabitReminderReceiver : BroadcastReceiver() {
         )
 
         val notification = NotificationCompat.Builder(context, "habit_reminders")
-            // Replace with a proper app icon resource before shipping
-            .setSmallIcon(android.R.drawable.ic_notification_clear_all)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle("$habitEmoji Time to $habitTitle")
             .setContentText("Tap to mark it done for today")
             .setContentIntent(pendingIntent)
