@@ -5,6 +5,7 @@
 *.mov
 *.mp4
 screenshots/
+releases/
 
 # Signing credentials
 android/keystore.properties
