@@ -75,6 +75,7 @@ fun MainShell(
     openHomeRequestId: Int = 0,
     onAddGoal: () -> Unit = {},
     onEditHabit: (Long) -> Unit = {},
+    onViewHabit: (Long) -> Unit = {},
     onEditProfile: () -> Unit = {},
 ) {
     val mainViewModel: MainViewModel = viewModel(factory = factory)
@@ -156,6 +157,7 @@ fun MainShell(
                         viewModel = goalsViewModel,
                         onAddGoal = onAddGoal,
                         onEditHabit = onEditHabit,
+                        onViewHabit = onViewHabit,
                     )
                     MainTab.Insights -> InsightsScreen(viewModel = insightsViewModel)
                     MainTab.Profile -> ProfileScreen(

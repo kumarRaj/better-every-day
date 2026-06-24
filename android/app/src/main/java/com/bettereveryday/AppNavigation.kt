@@ -167,6 +167,7 @@ fun AppNavigation(
                     openHomeRequestId = openHomeRequestId,
                     onAddGoal = { navController.navigate("add_goal") },
                     onEditHabit = { id -> navController.navigate("edit_goal/$id") },
+                    onViewHabit = { id -> navController.navigate("habit/$id") },
                     onEditProfile = { showEditProfile = true },
                 )
             }
