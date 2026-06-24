@@ -48,6 +48,14 @@ Run Android commands from `android/` with the Gradle wrapper:
 - Boot rescheduling is handled by `BootCompletedReceiver`.
 - Be careful with exact alarms on modern Android; behavior may depend on device permissions/policy.
 
+## Edge-to-Edge and Insets
+
+- `MainActivity` calls `enableEdgeToEdge()` — content draws behind system bars.
+- `MainShell`'s `Scaffold` sets `contentWindowInsets = WindowInsets(0, 0, 0, 0)`, so insets are not consumed automatically.
+- Every screen is responsible for its own top inset. Use `.windowInsetsPadding(WindowInsets.statusBars)` on the top-level container (or the header box for detail screens with a gradient header).
+- The bottom nav bar handles its own bottom inset via `.windowInsetsPadding(WindowInsets.navigationBars)`.
+- `StatusBarPaddingTest` asserts all screens apply this — add a case there whenever a new top-level screen is created.
+
 ## Known Constraints
 
 - Streak calculation currently walks completion history in ViewModels and is not optimized.
