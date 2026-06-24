@@ -59,7 +59,6 @@ fun GoalsScreen(
     viewModel: GoalsViewModel,
     onAddGoal: () -> Unit,
     onEditHabit: (Long) -> Unit,
-    onViewHabit: (Long) -> Unit,
 ) {
     val theme = LocalAppTheme.current
     val habits by viewModel.habits.collectAsState()
@@ -143,7 +142,6 @@ fun GoalsScreen(
                     habit = habit,
                     isCompletedToday = habit.id in completedTodayIds,
                     streak = streaks[habit.id] ?: 0,
-                    onRowClick = { onViewHabit(habit.id) },
                     onEditClick = { onEditHabit(habit.id) },
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -188,13 +186,11 @@ private fun GoalRow(
     habit: HabitEntity,
     isCompletedToday: Boolean,
     streak: Int,
-    onRowClick: () -> Unit,
     onEditClick: () -> Unit,
 ) {
     val theme = LocalAppTheme.current
 
     Card(
-        onClick = onRowClick,
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = CardBackground),
         modifier = Modifier.fillMaxWidth(),

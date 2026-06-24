@@ -2,6 +2,7 @@ package com.bettereveryday.ui.insights
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.BarChart
@@ -52,7 +53,7 @@ import com.bettereveryday.ui.theme.accent
 import com.bettereveryday.ui.theme.accentLight
 
 @Composable
-fun InsightsScreen(viewModel: InsightsViewModel) {
+fun InsightsScreen(viewModel: InsightsViewModel, onViewHabit: (Long) -> Unit = {}) {
     val theme = LocalAppTheme.current
     val weeklyData by viewModel.weeklyData.collectAsState()
     val streakLeaders by viewModel.streakLeaders.collectAsState()
@@ -136,7 +137,11 @@ fun InsightsScreen(viewModel: InsightsViewModel) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .clickable { onViewHabit(leader.habitId) }
+                            .padding(vertical = 4.dp),
                     ) {
                         Box(
                             modifier = Modifier

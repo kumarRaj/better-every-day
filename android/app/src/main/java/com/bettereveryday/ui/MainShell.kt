@@ -157,9 +157,11 @@ fun MainShell(
                         viewModel = goalsViewModel,
                         onAddGoal = onAddGoal,
                         onEditHabit = onEditHabit,
+                    )
+                    MainTab.Insights -> InsightsScreen(
+                        viewModel = insightsViewModel,
                         onViewHabit = onViewHabit,
                     )
-                    MainTab.Insights -> InsightsScreen(viewModel = insightsViewModel)
                     MainTab.Profile -> ProfileScreen(
                         viewModel = profileViewModel,
                         onEditProfile = onEditProfile,
