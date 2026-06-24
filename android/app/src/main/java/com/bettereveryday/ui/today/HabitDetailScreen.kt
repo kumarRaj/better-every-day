@@ -20,6 +20,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -80,6 +83,7 @@ fun HabitDetailScreen(
                     Brush.linearGradient(listOf(theme.gradientStart, theme.gradientEnd)),
                     RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp),
                 )
+                .windowInsetsPadding(WindowInsets.statusBars)
                 .padding(20.dp),
         ) {
             IconButton(

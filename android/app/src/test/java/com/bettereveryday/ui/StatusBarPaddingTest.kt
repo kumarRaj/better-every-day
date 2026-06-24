@@ -55,4 +55,14 @@ class StatusBarPaddingTest {
             source.contains("WindowInsets.statusBars"),
         )
     }
+
+    @Test
+    fun habitDetailScreen_appliesStatusBarInsetPadding() {
+        val source = screenSource("today/HabitDetailScreen.kt")
+        assertTrue(
+            "HabitDetailScreen must apply windowInsetsPadding(WindowInsets.statusBars) to avoid " +
+                "the back button and header being hidden under the status bar on edge-to-edge displays",
+            source.contains("WindowInsets.statusBars"),
+        )
+    }
 }
